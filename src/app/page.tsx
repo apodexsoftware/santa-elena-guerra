@@ -390,7 +390,7 @@ const WompiPaymentStep = ({
 export default function InscripcionPage() {
   const supabase = createClient();
   const [loading, setLoading] = useState(true);
-  const [currentStep, setCurrentStep] = useState<number | 'payment'>('form');
+  const [currentStep, setCurrentStep] = useState<string | 'payment'>('form');
   const [eventoActivo, setEventoActivo] = useState<any>(null);
   const [dbData, setDbData] = useState<any>({ tipos: [], eps: [], dio: [], config: null });
   const [stats, setStats] = useState({ inscritos: 0, cupos: 5000, porcentaje: 0 });
