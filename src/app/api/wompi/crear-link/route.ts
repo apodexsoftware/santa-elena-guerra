@@ -61,7 +61,7 @@ export async function POST(request: Request) {
     const inserts = inscripciones.map((inscripcion: any) => ({
       ...inscripcion,
       evento_id,
-      estado: 'pendiente_pago',
+      estado: 'pendiente',
       transaccion_id: transaccion.id,
       referencia_pago: reference,
       created_at: new Date().toISOString()
