@@ -491,7 +491,7 @@ export default function AdminDashboard() {
                 ) : (
                   <Download size={18} />
                 )}
-                {exporting ? "Generando..." : "Exportar PDF"}
+                {exporting ? "Generando..." : "Exportar Excel"}
               </motion.button>
             </div>
           </div>
