@@ -1,83 +1,116 @@
-import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
-
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+import { NextResponse } from 'next/server'
+import { createClient } from '@/utils/supabase/server'
 
 export async function POST(request: Request) {
   try {
-    const payload = await request.json();
+    const supabase = await createClient()
+    const payload = await request.json()
 
-    console.log('EVENT:', payload.event);
-    console.log('Webhook Wompi payload:', JSON.stringify(payload, null, 2))
+    console.log('📩 Webhook Wompi recibido:', JSON.stringify(payload, null, 2))
 
-    // ✅ SOLO este evento importa
-    if (payload.event !== 'transaction.updated') {
-      return NextResponse.json({ status: 'ignored' }, { status: 200 });
+    const event = payload.event
+    const transaction = payload?.data?.transaction
+
+    // 🔒 Validaciones mínimas
+    if (!event || !transaction) {
+      return NextResponse.json(
+        { error: 'Payload inválido' },
+        { status: 400 }
+      )
     }
 
-    const transaction = payload?.data?.transaction;
-    if (!transaction) {
-      throw new Error('Transaction missing');
+    if (event !== 'transaction.updated') {
+      // Aceptamos pero ignoramos otros eventos
+      return NextResponse.json({ received: true })
     }
 
-    const { reference, status, id: wompiTxId } = transaction;
+    const {
+      status,
+      payment_link_id,
+      id: wompi_transaction_id,
+      amount_in_cents,
+      reference
+    } = transaction
 
-    if (!reference) {
-      throw new Error('Reference missing');
+    if (!payment_link_id) {
+      console.error('❌ No viene payment_link_id')
+      return NextResponse.json(
+        { error: 'payment_link_id ausente' },
+        { status: 400 }
+      )
     }
 
-    let nuevoEstado: 'pendiente' | 'pagado' | 'rechazado';
+    /**
+     * 1️⃣ Buscar transacción interna por payment_link_id
+     */
+    const { data: transaccion, error: txError } = await supabase
+      .from('transacciones')
+      .select('id, estado')
+      .eq('wompi_link_id', payment_link_id)
+      .single()
+
+    if (txError || !transaccion) {
+      console.error('❌ Transacción no encontrada:', payment_link_id)
+      return NextResponse.json(
+        { error: 'Transacción no encontrada' },
+        { status: 404 }
+      )
+    }
+
+    /**
+     * 2️⃣ Mapear estado Wompi → estado interno
+     */
+    let nuevoEstado: string | null = null
 
     switch (status) {
       case 'APPROVED':
-        nuevoEstado = 'pagado';
-        break;
+        nuevoEstado = 'pagado'
+        break
       case 'DECLINED':
       case 'VOIDED':
       case 'ERROR':
-        nuevoEstado = 'rechazado';
-        break;
+        nuevoEstado = 'rechazado'
+        break
       default:
-        return NextResponse.json({ status: 'ignored' }, { status: 200 });
+        // estados intermedios
+        return NextResponse.json({ received: true })
     }
 
-    // 🔄 Actualizar transacción
-    const { data: txUpdated } = await supabaseAdmin
+    /**
+     * 3️⃣ Actualizar transacción
+     */
+    await supabase
       .from('transacciones')
       .update({
         estado: nuevoEstado,
-        wompi_transaction_id: wompiTxId,
-        updated_at: new Date().toISOString()
+        wompi_transaction_id,
+        wompi_status: status,
+        wompi_amount: amount_in_cents / 100,
+        wompi_reference: reference,
+        wompi_webhook_payload: payload
       })
-      .eq('referencia', reference)
-      .select();
+      .eq('id', transaccion.id)
 
-    console.log('TX UPDATED:', txUpdated);
-
-    // 🔄 Actualizar inscripciones SOLO si pagado
+    /**
+     * 4️⃣ Actualizar inscripciones si fue aprobado
+     */
     if (nuevoEstado === 'pagado') {
-      const { data: insUpdated } = await supabaseAdmin
+      await supabase
         .from('inscripciones')
-        .update({
-          estado: 'pagado',
-          updated_at: new Date().toISOString()
-        })
-        .eq('referencia_pago', reference)
-        .select();
-
-      console.log('INS UPDATED:', insUpdated);
+        .update({ estado: 'confirmada' })
+        .eq('transaccion_id', transaccion.id)
     }
 
-    return NextResponse.json({ status: 'ok' }, { status: 200 });
+    console.log(`✅ Transacción ${transaccion.id} actualizada a ${nuevoEstado}`)
+
+    return NextResponse.json({ received: true })
 
   } catch (error: any) {
-    console.error('WEBHOOK ERROR:', error);
+    console.error('🔥 Error en webhook Wompi:', error)
+
     return NextResponse.json(
-      { error: error.message },
+      { error: 'Error procesando webhook', details: error.message },
       { status: 500 }
-    );
+    )
   }
 }

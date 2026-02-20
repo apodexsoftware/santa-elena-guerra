@@ -14,8 +14,14 @@ export async function POST(request: Request) {
       email_contacto
     } = await request.json()
 
-    // 🔒 Validaciones básicas
-    if (!evento_id || !diocesis_id || !inscripciones?.length || !total) {
+    // 🔒 Validaciones
+    if (
+      !evento_id ||
+      !diocesis_id ||
+      !Array.isArray(inscripciones) ||
+      inscripciones.length === 0 ||
+      !total
+    ) {
       return NextResponse.json(
         { error: 'Faltan datos requeridos' },
         { status: 400 }
@@ -37,7 +43,9 @@ export async function POST(request: Request) {
       throw new Error('API Key de Wompi no configurada')
     }
 
-    // 1️⃣ Crear transacción SIN referencia
+    /**
+     * 1️⃣ Crear transacción interna (SIN wompi_link_id aún)
+     */
     const { data: transaccion, error: txError } = await supabase
       .from('transacciones')
       .insert({
@@ -54,16 +62,19 @@ export async function POST(request: Request) {
 
     if (txError) throw txError
 
-    // 2️⃣ Generar referencia estable
+    /**
+     * 2️⃣ Referencia interna (solo informativa)
+     */
     const reference = `TX_${transaccion.id}_${Date.now()}`
 
-    // 3️⃣ Guardar referencia en la transacción
     await supabase
       .from('transacciones')
       .update({ referencia: reference })
       .eq('id', transaccion.id)
 
-    // 4️⃣ Crear inscripciones en estado pendiente
+    /**
+     * 3️⃣ Crear inscripciones en estado pendiente
+     */
     const inserts = inscripciones.map((insc: any) => ({
       nombre: insc.nombre,
       apellido: insc.apellido,
@@ -88,15 +99,16 @@ export async function POST(request: Request) {
 
     if (insError) throw insError
 
-    // 💰 Payload Wompi
+    /**
+     * 4️⃣ Payload Wompi
+     */
     const payload = {
-      name: `Inscripción Evento - ${diocesis_nombre || ''}`,
+      name: `Inscripción Evento - ${diocesis_nombre}`,
       description: `Inscripción para ${inscripciones.length} persona(s)`,
       single_use: true,
       currency: 'COP',
-      amount_in_cents: Math.round(total * 100),
+      amount_in_cents: Math.round(Number(total) * 100),
       collect_shipping: false,
-      reference,
       redirect_url: `${process.env.NEXT_PUBLIC_APP_URL}/inscripcion/confirmacion?tx=${transaccion.id}`,
       customer_data: {
         full_name: `${inscripciones[0].nombre} ${inscripciones[0].apellido}`,
@@ -104,14 +116,16 @@ export async function POST(request: Request) {
         phone_number: '573000000000'
       },
       meta_data: {
+        transaccion_id: transaccion.id,
         evento_id,
         diocesis_id,
-        transaccion_id: transaccion.id,
         cantidad_personas: inscripciones.length
       }
     }
 
-    // 5️⃣ Crear link de pago en Wompi
+    /**
+     * 5️⃣ Crear Payment Link en Wompi
+     */
     const wompiRes = await fetch(wompiUrl, {
       method: 'POST',
       headers: {
@@ -123,7 +137,7 @@ export async function POST(request: Request) {
 
     const wompiData = await wompiRes.json()
 
-    if (!wompiRes.ok) {
+    if (!wompiRes.ok || !wompiData?.data?.id) {
       await supabase
         .from('transacciones')
         .update({ estado: 'rechazado' })
@@ -135,7 +149,9 @@ export async function POST(request: Request) {
       )
     }
 
-    // 6️⃣ Guardar respuesta Wompi
+    /**
+     * 6️⃣ Guardar payment_link_id (CLAVE DE CONCILIACIÓN)
+     */
     await supabase
       .from('transacciones')
       .update({
@@ -144,16 +160,19 @@ export async function POST(request: Request) {
       })
       .eq('id', transaccion.id)
 
-    // ✅ Respuesta final
+    /**
+     * 7️⃣ Respuesta
+     */
     return NextResponse.json({
       success: true,
       url: `https://checkout.wompi.co/l/${wompiData.data.id}`,
       transaccion_id: transaccion.id,
-      referencia: reference
+      payment_link_id: wompiData.data.id
     })
 
   } catch (error: any) {
     console.error('Error creando pago Wompi:', error)
+
     return NextResponse.json(
       { error: 'Error interno', details: error.message },
       { status: 500 }
