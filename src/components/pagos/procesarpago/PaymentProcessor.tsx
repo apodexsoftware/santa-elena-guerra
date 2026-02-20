@@ -45,7 +45,9 @@ export default function PaymentProcessor({
         segmentacion: persona.segmentacion,
         hospedaje: persona.hospedaje,
         precio_pactado: total / personas.length, // Dividir el total entre personas
-        diocesis
+        diocesis,
+        metodoviaje: persona.mediodetransporte,
+        telefono: persona.telefono
       }));
 
       const response = await fetch('/api/wompi', {
@@ -86,7 +88,7 @@ export default function PaymentProcessor({
     <div className="space-y-6">
       {/* Métodos de pago */}
       <div className="space-y-4">
-        <h4 className="text-sm font-bold text-slate-800 uppercase">Selecciona método de pago</h4>
+        <h4 className="text-sm font-bold text-[#1E2D69] uppercase">Selecciona método de pago</h4>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <motion.button
@@ -96,32 +98,32 @@ export default function PaymentProcessor({
             disabled={processing}
             className={`p-6 rounded-2xl border-2 transition-all ${
               paymentMethod === 'wompi' 
-                ? 'border-indigo-500 bg-indigo-50' 
-                : 'border-slate-200 hover:border-indigo-300 hover:bg-slate-50'
+                ? 'border-[#009944] bg-[#009944]/10' 
+                : 'border-[#E6E7E8] hover:border-[#009944]/50 hover:bg-[#E6E7E8]/20'
             } ${processing ? 'opacity-50 cursor-not-allowed' : ''}`}
           >
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-3">
                 <div className={`p-3 rounded-xl ${
                   paymentMethod === 'wompi' 
-                    ? 'bg-indigo-100 text-indigo-600' 
-                    : 'bg-slate-100 text-slate-600'
+                    ? 'bg-[#009944]/20 text-[#009944]' 
+                    : 'bg-[#E6E7E8] text-[#1E2D69]/50'
                 }`}>
                   <CreditCard size={20} />
                 </div>
                 <div className="text-left">
-                  <p className="font-bold text-slate-800">Pago Online Seguro</p>
-                  <p className="text-xs text-slate-500">Tarjeta, PSE, Nequi, Daviplata</p>
+                  <p className="font-bold text-[#1E2D69]">Pago Online Seguro</p>
+                  <p className="text-xs text-[#1E5CAA]/70">Tarjeta, PSE, Nequi, Daviplata</p>
                 </div>
               </div>
               {processing && paymentMethod === 'wompi' && (
-                <Loader2 className="animate-spin text-indigo-600" size={20} />
+                <Loader2 className="animate-spin text-[#009944]" size={20} />
               )}
             </div>
             
-            <div className="flex items-center justify-between text-xs text-slate-600">
+            <div className="flex items-center justify-between text-xs text-[#1E2D69]/60">
               <span className="flex items-center gap-1">
-                <Shield size={12} className="text-emerald-500" />
+                <Shield size={12} className="text-[#009944]" />
                 Protegido por Wompi
               </span>
               <span className="flex items-center gap-1">
@@ -132,17 +134,17 @@ export default function PaymentProcessor({
           </motion.button>
 
           {/* Puedes agregar más métodos de pago aquí */}
-          <div className="p-6 rounded-2xl border-2 border-slate-200 bg-slate-50 opacity-50 cursor-not-allowed">
+          <div className="p-6 rounded-2xl border-2 border-[#E6E7E8] bg-[#E6E7E8]/30 opacity-50 cursor-not-allowed">
             <div className="flex items-center gap-3 mb-3">
-              <div className="p-3 rounded-xl bg-slate-200 text-slate-400">
+              <div className="p-3 rounded-xl bg-[#E6E7E8] text-[#1E2D69]/30">
                 <Smartphone size={20} />
               </div>
               <div className="text-left">
-                <p className="font-bold text-slate-400">Pago Bancario</p>
-                <p className="text-xs text-slate-400">(Próximamente)</p>
+                <p className="font-bold text-[#1E2D69]/50">Pago Bancario</p>
+                <p className="text-xs text-[#1E2D69]/40">(Próximamente)</p>
               </div>
             </div>
-            <div className="text-xs text-slate-400">
+            <div className="text-xs text-[#1E2D69]/40">
               Transferencia o consignación
             </div>
           </div>
@@ -154,13 +156,13 @@ export default function PaymentProcessor({
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-gradient-to-r from-emerald-50 to-green-50 p-4 rounded-2xl border border-emerald-100"
+          className="bg-gradient-to-r from-[#009944]/10 to-[#1E5CAA]/10 p-4 rounded-2xl border border-[#009944]/30"
         >
           <div className="flex items-start gap-3">
-            <Shield className="text-emerald-600 mt-0.5" size={18} />
+            <Shield className="text-[#009944] mt-0.5" size={18} />
             <div>
-              <p className="font-bold text-emerald-800 text-sm">Pago 100% Seguro</p>
-              <p className="text-xs text-emerald-700">
+              <p className="font-bold text-[#009944] text-sm">Pago 100% Seguro</p>
+              <p className="text-xs text-[#1E2D69]/70">
                 Tus datos están protegidos con encriptación SSL. Wompi es una plataforma autorizada y supervisada por la Superintendencia Financiera.
               </p>
             </div>
@@ -175,9 +177,9 @@ export default function PaymentProcessor({
           animate={{ opacity: 1 }}
           className="text-center py-8"
         >
-          <Loader2 className="animate-spin text-indigo-600 mx-auto mb-4" size={32} />
-          <p className="font-bold text-slate-700">Generando enlace de pago seguro</p>
-          <p className="text-sm text-slate-500 mt-2">
+          <Loader2 className="animate-spin text-[#009944] mx-auto mb-4" size={32} />
+          <p className="font-bold text-[#1E2D69]">Generando enlace de pago seguro</p>
+          <p className="text-sm text-[#1E2D69]/60 mt-2">
             Estamos creando tu transacción en Wompi...
           </p>
         </motion.div>

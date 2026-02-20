@@ -12,9 +12,9 @@ import {
 const navItems = [
   { name: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
   { name: "Inscripciones", href: "/admin/inscripciones", icon: Users },
-  { name: "Finanzas", href: "/admin/finanzas", icon: BadgeDollarSign },
+  // { name: "Finanzas", href: "/admin/finanzas", icon: BadgeDollarSign },
   { name: "Jurisdicciones", href: "/admin/diocesis", icon: Map },
-  { name: "Roles", href: "/admin/roles", icon: UserCog },
+  // { name: "Roles", href: "/admin/roles", icon: UserCog },
   { name: "Eventos", href: "/admin/eventos", icon: UserCog },
 ];
 

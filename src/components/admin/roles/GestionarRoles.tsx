@@ -69,9 +69,9 @@ export default function GestionarRolesActivo({ onEdit }: any) {
           <thead>
             <tr className="bg-slate-50/50">
               <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Perfil Activo</th>
-              <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Estrategia</th>
-              <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Descuento</th>
-              <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Acciones</th>
+              {/*<th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Estrategia</th>*/}
+              {/*<th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Descuento</th>*/}
+              {/*<th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Acciones</th>*/}
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-50">
@@ -83,20 +83,22 @@ export default function GestionarRolesActivo({ onEdit }: any) {
                     <span className="font-black text-slate-900 uppercase italic text-sm">{rol.nombre}</span>
                   </div>
                 </td>
-                <td className="p-6 text-center">
+                {/*<td className="p-6 text-center">
                   <span className="text-[10px] font-bold px-3 py-1 bg-slate-100 rounded-full text-slate-500 uppercase">
                     {rol.metodo_activo}
                   </span>
-                </td>
-                <td className="p-6 text-center font-black text-indigo-600 italic">
+                </td>*/}
+                
+                {/*<td className="p-6 text-center font-black text-indigo-600 italic">
                   {rol.metodo_activo === 'porcentaje' ? `-${rol.descuento_porcentaje}%` : 
                    rol.metodo_activo === 'fijo' ? `-$${rol.descuento_fijo.toLocaleString()}` : '0%'}
-                </td>
+                </td>*/}
+                {/*
                 <td className="p-6 text-right">
                   <button onClick={() => onEdit(rol)} className="p-2 text-slate-400 hover:text-indigo-600">
                     <Edit3 size={18} />
                   </button>
-                </td>
+                </td>*/}
               </tr>
             ))}
           </tbody>

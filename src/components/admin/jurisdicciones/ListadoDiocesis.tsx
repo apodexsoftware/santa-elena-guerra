@@ -486,14 +486,14 @@ export default function ListadoDiocesis({
                                   )}
                                 </div>
                                 
-                                {item.email_encargado && (
+                                {/*{item.email_encargado && (
                                   <div className="flex items-center gap-1.5 mt-1.5">
                                     <Mail size={12} className="text-slate-400 shrink-0" />
                                     <span className="text-sm text-slate-600 truncate">
                                       {item.email_encargado}
                                     </span>
                                   </div>
-                                )}
+                                )}*/}
                                 
                                 {hasInscripciones && (
                                   <div className="flex items-center gap-1.5 mt-1.5">
@@ -534,6 +534,7 @@ export default function ListadoDiocesis({
                                       Información
                                     </h4>
                                     <div className="space-y-3">
+                                      {/*
                                       <div>
                                         <div className="text-xs text-slate-500 font-medium mb-1 flex items-center gap-2">
                                           <Hash size={12} />
@@ -542,7 +543,7 @@ export default function ListadoDiocesis({
                                         <div className="text-sm font-mono text-slate-800 bg-slate-50 p-2.5 rounded-lg overflow-x-auto">
                                           {item.id}
                                         </div>
-                                      </div>
+                                      </div>*/}
                                       
                                       <div>
                                         <div className="text-xs text-slate-500 font-medium mb-1 flex items-center gap-2">
@@ -583,12 +584,12 @@ export default function ListadoDiocesis({
                                       ) : (
                                         <div>
                                           <div className="text-xs text-slate-500 font-medium mb-1">
-                                            Precio Global
+                                            Precio por diocesis
                                           </div>
                                           <div className="flex items-center gap-2 text-xl font-black text-indigo-600">
                                             <Banknote size={18} />
                                             <span>
-                                              ${Number(configuracionEvento?.precio_global_base || 0).toLocaleString('es-ES')}
+                                              ${Number(item.precio_base || 0).toLocaleString('es-ES')}
                                             </span>
                                           </div>
                                           <p className="text-xs text-slate-500 mt-2">
@@ -604,6 +605,7 @@ export default function ListadoDiocesis({
                               {/* Acciones */}
                               <div className="flex flex-col sm:flex-row justify-between items-center gap-4 pt-6 mt-6 border-t border-slate-100">
                                 <div className="flex items-center gap-3">
+                                  {/*
                                   <button
                                     onClick={() => {
                                       navigator.clipboard.writeText(item.id);
@@ -613,10 +615,11 @@ export default function ListadoDiocesis({
                                   >
                                     <LinkIcon size={14} />
                                     Copiar ID
-                                  </button>
+                                  </button>*/}
                                 </div>
                                 
                                 <div className="flex items-center gap-3">
+                                  {/*
                                   <button
                                     onClick={() => onEdit(item)}
                                     className="px-4 py-2 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded-xl font-bold text-sm flex items-center gap-2 transition-colors"
@@ -646,6 +649,7 @@ export default function ListadoDiocesis({
                                       </>
                                     )}
                                   </button>
+                                  */}
                                 </div>
                               </div>
                               

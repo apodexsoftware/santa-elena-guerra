@@ -58,7 +58,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center p-4 overflow-hidden relative">
+    <div className="min-h-screen bg-gradient-to-br from-[#1E2D69] via-[#1E5CAA] to-[#1E2D69] flex items-center justify-center p-4 overflow-hidden relative">
       
       {/* Fondo de Partículas */}
       <div className="absolute inset-0 z-0">
@@ -75,9 +75,9 @@ export default function LoginPage() {
               },
             },
             particles: {
-              color: { value: "#ffffff" },
+              color: { value: "#E6E7E8" }, // Gris Claro
               links: {
-                color: "#8b5cf6",
+                color: "#009944", // Verde
                 distance: 150,
                 enable: true,
                 opacity: 0.2,
@@ -101,8 +101,8 @@ export default function LoginPage() {
         />
       </div>
 
-      {/* Glow Decorativo */}
-      <div className="absolute inset-0 bg-gradient-to-tr from-violet-500/10 via-transparent to-cyan-500/10 blur-3xl" />
+      {/* Glow Decorativo con Rosa y Amarillo */}
+      <div className="absolute inset-0 bg-gradient-to-tr from-[#EC008C]/10 via-transparent to-[#FFF200]/10 blur-3xl" />
 
       {/* Logo Superior */}
       <motion.div
@@ -110,12 +110,12 @@ export default function LoginPage() {
         animate={{ opacity: 1, y: 0 }}
         className="absolute top-8 left-8 z-10 flex items-center gap-3"
       >
-        <div className="w-10 h-10 bg-gradient-to-br from-violet-600 to-cyan-500 rounded-xl flex items-center justify-center shadow-lg">
+        <div className="w-10 h-10 bg-gradient-to-br from-[#009944] to-[#1E5CAA] rounded-xl flex items-center justify-center shadow-lg">
           <Shield className="text-white" size={20} />
         </div>
         <div className="hidden sm:block">
           <h2 className="text-lg font-bold text-white leading-none">AdminSecure</h2>
-          <p className="text-xs text-slate-400">Control Panel</p>
+          <p className="text-xs text-[#E6E7E8]">Control Panel</p>
         </div>
       </motion.div>
 
@@ -133,14 +133,14 @@ export default function LoginPage() {
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ type: "spring", damping: 12 }}
-              className="w-20 h-20 bg-gradient-to-br from-violet-600 to-cyan-500 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-2xl shadow-violet-500/40"
+              className="w-20 h-20 bg-gradient-to-br from-[#009944] to-[#1E5CAA] rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-2xl shadow-[#009944]/40"
             >
               <Lock className="text-white" size={32} />
             </motion.div>
             <h1 className="text-3xl font-black text-white tracking-tight uppercase italic">
               Bienvenido
             </h1>
-            <p className="text-slate-400 text-sm mt-2 font-medium">
+            <p className="text-[#E6E7E8] text-sm mt-2 font-medium">
               Ingresa tus credenciales de administrador
             </p>
           </div>
@@ -153,7 +153,7 @@ export default function LoginPage() {
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95 }}
-                  className="bg-red-500/10 border border-red-500/20 text-red-300 p-4 rounded-2xl text-sm font-medium text-center"
+                  className="bg-[#ED1C24]/10 border border-[#ED1C24]/20 text-[#ED1C24] p-4 rounded-2xl text-sm font-medium text-center"
                 >
                   {error}
                 </motion.div>
@@ -161,16 +161,16 @@ export default function LoginPage() {
             </AnimatePresence>
 
             <div className="space-y-2">
-              <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">
+              <label className="text-[10px] font-black text-[#E6E7E8] uppercase tracking-[0.2em] ml-1">
                 Correo Electrónico
               </label>
               <div className="relative group">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-violet-400 transition-colors" size={18} />
+                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-[#E6E7E8] group-focus-within:text-[#009944] transition-colors" size={18} />
                 <input 
                   type="email" 
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-12 pr-5 py-4 bg-white/5 border border-white/10 rounded-2xl text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-violet-500/50 transition-all"
+                  className="w-full pl-12 pr-5 py-4 bg-white/5 border border-white/10 rounded-2xl text-white placeholder-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-[#009944]/50 transition-all"
                   placeholder="ejemplo@correo.com"
                   required 
                 />
@@ -178,23 +178,23 @@ export default function LoginPage() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">
+              <label className="text-[10px] font-black text-[#E6E7E8] uppercase tracking-[0.2em] ml-1">
                 Contraseña
               </label>
               <div className="relative group">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-violet-400 transition-colors" size={18} />
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-[#E6E7E8] group-focus-within:text-[#009944] transition-colors" size={18} />
                 <input 
                   type={showPassword ? "text" : "password"} 
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-12 pr-12 py-4 bg-white/5 border border-white/10 rounded-2xl text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-violet-500/50 transition-all"
+                  className="w-full pl-12 pr-12 py-4 bg-white/5 border border-white/10 rounded-2xl text-white placeholder-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-[#009944]/50 transition-all"
                   placeholder="••••••••"
                   required 
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white transition-colors"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-[#E6E7E8] hover:text-white transition-colors"
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
@@ -204,7 +204,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-violet-600 to-cyan-500 text-white font-black py-4 rounded-2xl mt-4 hover:shadow-xl hover:shadow-violet-600/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed group"
+              className="w-full bg-gradient-to-r from-[#ED1C24] to-[#EC008C] text-white font-black py-4 rounded-2xl mt-4 hover:shadow-xl hover:shadow-[#ED1C24]/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed group"
             >
               <div className="flex items-center justify-center gap-2">
                 {loading ? (
@@ -221,7 +221,7 @@ export default function LoginPage() {
             <div className="text-center pt-2">
               <Link 
                 href="/" 
-                className="text-slate-500 text-xs font-bold hover:text-white transition-colors uppercase tracking-widest"
+                className="text-[#E6E7E8] text-xs font-bold hover:text-[#FFF200] transition-colors uppercase tracking-widest"
               >
                 ← Volver al Portal Público
               </Link>
@@ -229,7 +229,7 @@ export default function LoginPage() {
           </form>
         </div>
 
-        <p className="mt-8 text-center text-[10px] text-slate-500 font-bold uppercase tracking-[0.3em] flex items-center justify-center gap-2">
+        <p className="mt-8 text-center text-[10px] text-[#E6E7E8] font-bold uppercase tracking-[0.3em] flex items-center justify-center gap-2">
           <Shield size={10} /> Acceso Restringido y Encriptado
         </p>
       </motion.div>

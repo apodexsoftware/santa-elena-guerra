@@ -55,20 +55,20 @@ export default function JurisdiccionesPage() {
             <LayoutGrid size={18}/> Resumen de Sedes
           </button>
           
-          <button onClick={() => { setActiveTab("agregar"); setEditingItem(null); }}
+          {/*<button onClick={() => { setActiveTab("agregar"); setEditingItem(null); }}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all ${activeTab === "agregar" ? "bg-indigo-600 text-white shadow-lg shadow-indigo-100" : "text-slate-500 hover:bg-slate-50"}`}>
             <PlusCircle size={18}/> {editingItem ? "Editando Sede" : "Agregar Diócesis"}
-          </button>
+          </button>*/}
 
-          <button onClick={() => setActiveTab("config")}
+          {/*<button onClick={() => setActiveTab("config")}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all ${activeTab === "config" ? "bg-indigo-600 text-white shadow-lg shadow-indigo-100" : "text-slate-500 hover:bg-slate-50"}`}>
-            <Settings2 size={18}/> Configuración Precios
-          </button>
-
-          <button onClick={() => setActiveTab("mensaje")}
+            <Settings2 size={18}/> Listar dicoesis
+          </button>*/}
+          
+          {/*<button onClick={() => setActiveTab("mensaje")}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all ${activeTab === "mensaje" ? "bg-indigo-600 text-white shadow-lg shadow-indigo-100" : "text-slate-500 hover:bg-slate-50"}`}>
             <Send size={18}/> Enviar Mensaje
-          </button>
+          </button>*/}
         </nav>
       </aside>
 
@@ -81,7 +81,7 @@ export default function JurisdiccionesPage() {
             {activeTab === "resumen" && <ListadoDiocesis data={diocesis} onEdit={handleEdit} />}
             {activeTab === "agregar" && <FormDiocesis initialData={editingItem} onRefresh={fetchDiocesis} onSuccess={() => setActiveTab("resumen")} />}
             {activeTab === "config" && <ConfigGlobal />}
-            {activeTab === "mensaje" && <EnviarMensajeSede data={diocesis} />}
+            {/*{activeTab === "mensaje" && <EnviarMensajeSede data={diocesis} />}*/}
           </div>
         )}
       </main>

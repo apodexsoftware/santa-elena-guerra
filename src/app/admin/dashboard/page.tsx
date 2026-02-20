@@ -34,7 +34,17 @@ import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import { motion, AnimatePresence } from "framer-motion";
 
-const COLORS = ['#8b5cf6', '#3b82f6', '#10b981', '#f59e0b', '#ec4899', '#6366f1', '#14b8a6', '#ef4444'];
+// Nueva paleta de colores
+const COLORS = [
+  '#009944', // Verde
+  '#1E5CAA', // Azul
+  '#FFF200', // Amarillo
+  '#ED1C24', // Rojo
+  '#EC008C', // Rosa/Magenta
+  '#1E2D69', // Azul Oscuro
+  '#B41919', // Rojo Oscuro
+  '#E6E7E8'  // Gris Claro
+];
 
 export default function AdminDashboard() {
   const supabase = createClient();
@@ -201,7 +211,7 @@ export default function AdminDashboard() {
         scale: 2,
         useCORS: true,
         logging: false,
-        backgroundColor: "#0f172a"
+        backgroundColor: "#1E2D69" // Azul oscuro de fondo
       });
       
       const imgData = canvas.toDataURL("image/png");
@@ -209,7 +219,7 @@ export default function AdminDashboard() {
       const pdfWidth = pdf.internal.pageSize.getWidth();
       const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
       
-      pdf.setFillColor(15, 23, 42);
+      pdf.setFillColor(30, 45, 105); // #1E2D69
       pdf.rect(0, 0, pdfWidth, pdfHeight, 'F');
       
       pdf.setFontSize(24);
@@ -217,7 +227,7 @@ export default function AdminDashboard() {
       pdf.text("Reporte Dashboard", pdfWidth / 2, 20, { align: "center" });
       
       pdf.setFontSize(12);
-      pdf.setTextColor(148, 163, 184);
+      pdf.setTextColor(230, 231, 232); // #E6E7E8
       pdf.text(`Generado: ${format(new Date(), "dd/MM/yyyy HH:mm")}`, pdfWidth / 2, 30, { align: "center" });
       pdf.text(`Total registros: ${dbData.length}`, pdfWidth / 2, 37, { align: "center" });
       
@@ -341,9 +351,9 @@ export default function AdminDashboard() {
 
     // Datos para estados
     const estadoData = [
-      { name: 'Aprobadas', value: aprobadas.length, color: '#10b981' },
-      { name: 'Pendientes', value: pendientes.length, color: '#f59e0b' },
-      { name: 'Rechazadas', value: rechazadas.length, color: '#ef4444' },
+      { name: 'Aprobadas', value: aprobadas.length, color: '#009944' }, // Verde
+      { name: 'Pendientes', value: pendientes.length, color: '#FFF200' }, // Amarillo
+      { name: 'Rechazadas', value: rechazadas.length, color: '#ED1C24' }, // Rojo
     ];
 
     // Datos para gráfico de radar (rendimiento por diócesis)
@@ -387,17 +397,17 @@ export default function AdminDashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex flex-col items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-[#1E2D69] via-[#1E5CAA] to-[#1E2D69] flex flex-col items-center justify-center">
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5 }}
           className="relative"
         >
-          <div className="w-32 h-32 bg-gradient-to-br from-violet-600 to-cyan-500 rounded-full flex items-center justify-center shadow-2xl shadow-violet-500/30">
+          <div className="w-32 h-32 bg-gradient-to-br from-[#009944] to-[#1E5CAA] rounded-full flex items-center justify-center shadow-2xl shadow-[#009944]/30">
             <Loader2 className="animate-spin text-white" size={48} />
           </div>
-          <div className="absolute inset-0 animate-ping bg-violet-600/20 rounded-full"></div>
+          <div className="absolute inset-0 animate-ping bg-[#009944]/20 rounded-full"></div>
         </motion.div>
         <motion.p
           initial={{ opacity: 0, y: 20 }}
@@ -407,19 +417,19 @@ export default function AdminDashboard() {
         >
           Cargando Dashboard
         </motion.p>
-        <p className="text-slate-300 mt-2">Preparando análisis de datos...</p>
+        <p className="text-[#E6E7E8] mt-2">Preparando análisis de datos...</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900" ref={reportRef}>
+    <div className="min-h-screen bg-gradient-to-br from-[#1E2D69] via-[#1E5CAA] to-[#1E2D69]" ref={reportRef}>
       <AdminNavbar />
       
       {/* Partículas de fondo */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-violet-500/5 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-cyan-500/5 rounded-full blur-3xl"></div>
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[#009944]/5 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-[#FFF200]/5 rounded-full blur-3xl"></div>
       </div>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -432,14 +442,14 @@ export default function AdminDashboard() {
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
             <div>
               <div className="flex items-center gap-3 mb-3">
-                <div className="w-12 h-12 bg-gradient-to-br from-violet-600 to-cyan-500 rounded-2xl flex items-center justify-center">
+                <div className="w-12 h-12 bg-gradient-to-br from-[#009944] to-[#1E5CAA] rounded-2xl flex items-center justify-center">
                   <Activity className="text-white" size={24} />
                 </div>
                 <div>
                   <h1 className="text-3xl md:text-4xl font-black text-white mb-1">
                     Panel de Control
                   </h1>
-                  <p className="text-slate-400 flex items-center gap-2">
+                  <p className="text-[#E6E7E8] flex items-center gap-2">
                     <Database size={14} />
                     {dbData.length} registros totales • Actualizado ahora
                   </p>
@@ -463,7 +473,7 @@ export default function AdminDashboard() {
                 whileTap={{ scale: 0.95 }}
                 onClick={generarPDF}
                 disabled={exporting}
-                className="px-6 py-3 bg-gradient-to-r from-violet-600 to-cyan-500 text-white font-bold rounded-xl hover:shadow-lg hover:shadow-violet-500/30 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                className="px-6 py-3 bg-gradient-to-r from-[#ED1C24] to-[#EC008C] text-white font-bold rounded-xl hover:shadow-lg hover:shadow-[#ED1C24]/30 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
               >
                 {exporting ? (
                   <Loader2 className="animate-spin" size={18} />
@@ -498,8 +508,8 @@ export default function AdminDashboard() {
                   onClick={() => setActiveTab(tab.id)}
                   className={`px-5 py-2.5 rounded-xl font-bold transition-all flex items-center gap-2 ${
                     activeTab === tab.id 
-                      ? 'bg-gradient-to-r from-violet-600 to-cyan-500 text-white shadow-lg shadow-violet-500/30' 
-                      : 'bg-white/5 text-slate-300 hover:bg-white/10'
+                      ? 'bg-gradient-to-r from-[#009944] to-[#1E5CAA] text-white shadow-lg shadow-[#009944]/30' 
+                      : 'bg-white/5 text-[#E6E7E8] hover:bg-white/10'
                   }`}
                 >
                   {tab.icon}
@@ -510,9 +520,9 @@ export default function AdminDashboard() {
             
             <div className="flex flex-wrap gap-3">
               <div className="relative">
-                <FilterIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" size={16} />
+                <FilterIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#E6E7E8]" size={16} />
                 <select 
-                  className="pl-10 pr-4 py-2.5 bg-white/5 backdrop-blur-sm border border-white/10 text-white rounded-xl focus:ring-2 focus:ring-violet-500 focus:border-transparent w-full"
+                  className="pl-10 pr-4 py-2.5 bg-white/5 backdrop-blur-sm border border-white/10 text-white rounded-xl focus:ring-2 focus:ring-[#009944] focus:border-transparent w-full"
                   value={timeRange}
                   onChange={(e) => setTimeRange(e.target.value as any)}
                 >
@@ -524,7 +534,7 @@ export default function AdminDashboard() {
               </div>
               
               <select 
-                className="px-4 py-2.5 bg-white/5 backdrop-blur-sm border border-white/10 text-white rounded-xl focus:ring-2 focus:ring-violet-500 focus:border-transparent"
+                className="px-4 py-2.5 bg-white/5 backdrop-blur-sm border border-white/10 text-white rounded-xl focus:ring-2 focus:ring-[#009944] focus:border-transparent"
                 value={selDiocesis}
                 onChange={(e) => setSelDiocesis(e.target.value)}
               >
@@ -535,7 +545,7 @@ export default function AdminDashboard() {
               </select>
               
               <select 
-                className="px-4 py-2.5 bg-white/5 backdrop-blur-sm border border-white/10 text-white rounded-xl focus:ring-2 focus:ring-violet-500 focus:border-transparent"
+                className="px-4 py-2.5 bg-white/5 backdrop-blur-sm border border-white/10 text-white rounded-xl focus:ring-2 focus:ring-[#009944] focus:border-transparent"
                 value={selEstado}
                 onChange={(e) => setSelEstado(e.target.value)}
               >
@@ -549,9 +559,9 @@ export default function AdminDashboard() {
           
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="flex items-center gap-3">
-              <div className="w-3 h-3 bg-gradient-to-r from-violet-600 to-cyan-500 rounded-full animate-pulse"></div>
+              <div className="w-3 h-3 bg-gradient-to-r from-[#009944] to-[#1E5CAA] rounded-full animate-pulse"></div>
               <div>
-                <p className="text-sm font-bold text-slate-400">Filtros aplicados</p>
+                <p className="text-sm font-bold text-[#E6E7E8]">Filtros aplicados</p>
                 <p className="font-bold text-white">
                   {timeRange !== "all" ? timeRange : "Todo"} • {selDiocesis === "all" ? "Todas" : "1"} diócesis
                 </p>
@@ -559,26 +569,26 @@ export default function AdminDashboard() {
             </div>
             
             <div className="flex items-center gap-3">
-              <div className="w-3 h-3 bg-emerald-500 rounded-full"></div>
+              <div className="w-3 h-3 bg-[#009944] rounded-full"></div>
               <div>
-                <p className="text-sm font-bold text-slate-400">Resultados</p>
+                <p className="text-sm font-bold text-[#E6E7E8]">Resultados</p>
                 <p className="font-bold text-white">{filteredData.length} registros</p>
               </div>
             </div>
             
             <div className="flex items-center gap-3">
-              <div className="w-3 h-3 bg-amber-500 rounded-full"></div>
+              <div className="w-3 h-3 bg-[#FFF200] rounded-full"></div>
               <div>
-                <p className="text-sm font-bold text-slate-400">Tasa éxito</p>
+                <p className="text-sm font-bold text-[#E6E7E8]">Tasa éxito</p>
                 <p className="font-bold text-white">{stats.tasaAprobacion.toFixed(1)}%</p>
               </div>
             </div>
             
             <div className="flex items-center gap-3">
-              <div className="w-3 h-3 bg-purple-500 rounded-full"></div>
+              <div className="w-3 h-3 bg-[#EC008C] rounded-full"></div>
               <div>
-                <p className="text-sm font-bold text-slate-400">Crecimiento</p>
-                <p className={`font-bold ${stats.crecimiento >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                <p className="text-sm font-bold text-[#E6E7E8]">Crecimiento</p>
+                <p className={`font-bold ${stats.crecimiento >= 0 ? 'text-[#009944]' : 'text-[#ED1C24]'}`}>
                   {stats.crecimiento >= 0 ? '+' : ''}{stats.crecimiento.toFixed(1)}%
                 </p>
               </div>
@@ -592,11 +602,11 @@ export default function AdminDashboard() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="backdrop-blur-xl bg-gradient-to-br from-violet-600/20 to-cyan-500/20 border border-white/10 rounded-2xl p-6"
+            className="backdrop-blur-xl bg-gradient-to-br from-[#009944]/20 to-[#1E5CAA]/20 border border-white/10 rounded-2xl p-6"
           >
             <div className="flex items-center justify-between mb-4">
               <div>
-                <p className="text-sm font-bold text-slate-300 uppercase tracking-widest">Recaudación Total</p>
+                <p className="text-sm font-bold text-[#E6E7E8] uppercase tracking-widest">Recaudación Total</p>
                 <p className="text-2xl md:text-3xl font-black text-white mt-2">
                   ${stats.totalRecaudado.toLocaleString('es-CO')}
                 </p>
@@ -607,12 +617,12 @@ export default function AdminDashboard() {
             </div>
             <div className="mt-4 space-y-2">
               <div className="flex justify-between text-sm">
-                <span className="text-slate-400">Pendiente</span>
-                <span className="font-bold text-amber-400">${stats.recaudoPendiente.toLocaleString('es-CO')}</span>
+                <span className="text-[#E6E7E8]">Pendiente</span>
+                <span className="font-bold text-[#FFF200]">${stats.recaudoPendiente.toLocaleString('es-CO')}</span>
               </div>
               <div className="h-2 bg-white/10 rounded-full overflow-hidden">
                 <div 
-                  className="h-full bg-gradient-to-r from-amber-500 to-yellow-500 rounded-full"
+                  className="h-full bg-gradient-to-r from-[#FFF200] to-[#EC008C] rounded-full"
                   style={{ width: `${Math.min(100, (stats.recaudoPendiente / (stats.totalRecaudado + stats.recaudoPendiente)) * 100)}%` }}
                 ></div>
               </div>
@@ -627,7 +637,7 @@ export default function AdminDashboard() {
           >
             <div className="flex items-center justify-between mb-4">
               <div>
-                <p className="text-sm font-bold text-slate-300 uppercase tracking-widest">Inscripciones</p>
+                <p className="text-sm font-bold text-[#E6E7E8] uppercase tracking-widest">Inscripciones</p>
                 <p className="text-2xl md:text-3xl font-black text-white mt-2">{stats.totalInscritos}</p>
               </div>
               <div className="p-3 bg-white/10 rounded-xl">
@@ -635,17 +645,17 @@ export default function AdminDashboard() {
               </div>
             </div>
             <div className="mt-4 grid grid-cols-3 gap-2">
-              <div className="text-center p-2 bg-emerald-500/10 rounded-lg">
-                <div className="text-lg font-bold text-emerald-400">{stats.aprobadas}</div>
-                <div className="text-xs text-slate-400">Aprobadas</div>
+              <div className="text-center p-2 bg-[#009944]/10 rounded-lg">
+                <div className="text-lg font-bold text-[#009944]">{stats.aprobadas}</div>
+                <div className="text-xs text-[#E6E7E8]">Aprobadas</div>
               </div>
-              <div className="text-center p-2 bg-amber-500/10 rounded-lg">
-                <div className="text-lg font-bold text-amber-400">{stats.pendientes}</div>
-                <div className="text-xs text-slate-400">Pendientes</div>
+              <div className="text-center p-2 bg-[#FFF200]/10 rounded-lg">
+                <div className="text-lg font-bold text-[#FFF200]">{stats.pendientes}</div>
+                <div className="text-xs text-[#E6E7E8]">Pendientes</div>
               </div>
-              <div className="text-center p-2 bg-rose-500/10 rounded-lg">
-                <div className="text-lg font-bold text-rose-400">{stats.rechazadas}</div>
-                <div className="text-xs text-slate-400">Rechazadas</div>
+              <div className="text-center p-2 bg-[#ED1C24]/10 rounded-lg">
+                <div className="text-lg font-bold text-[#ED1C24]">{stats.rechazadas}</div>
+                <div className="text-xs text-[#E6E7E8]">Rechazadas</div>
               </div>
             </div>
           </motion.div>
@@ -658,24 +668,24 @@ export default function AdminDashboard() {
           >
             <div className="flex items-center justify-between mb-4">
               <div>
-                <p className="text-sm font-bold text-slate-300 uppercase tracking-widest">Ticket Promedio</p>
-                <p className="text-2xl md:text-3xl font-black text-emerald-400 mt-2">
+                <p className="text-sm font-bold text-[#E6E7E8] uppercase tracking-widest">Ticket Promedio</p>
+                <p className="text-2xl md:text-3xl font-black text-[#009944] mt-2">
                   ${stats.ticketPromedio.toLocaleString('es-CO', { maximumFractionDigits: 0 })}
                 </p>
               </div>
               <div className="p-3 bg-white/10 rounded-xl">
-                <TrendingUp className="text-emerald-400" size={24} />
+                <TrendingUp className="text-[#009944]" size={24} />
               </div>
             </div>
             <div className="mt-4">
               <div className="flex items-center gap-2 text-sm">
                 <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden">
                   <div 
-                    className="h-full bg-gradient-to-r from-emerald-500 to-green-500 rounded-full"
+                    className="h-full bg-gradient-to-r from-[#009944] to-[#1E5CAA] rounded-full"
                     style={{ width: `${Math.min(100, (stats.ticketPromedio / 200000) * 100)}%` }}
                   ></div>
                 </div>
-                <span className="text-slate-400 whitespace-nowrap">vs. meta</span>
+                <span className="text-[#E6E7E8] whitespace-nowrap">vs. meta</span>
               </div>
             </div>
           </motion.div>
@@ -688,22 +698,22 @@ export default function AdminDashboard() {
           >
             <div className="flex items-center justify-between mb-4">
               <div>
-                <p className="text-sm font-bold text-slate-300 uppercase tracking-widest">Distribución</p>
-                <p className="text-2xl md:text-3xl font-black text-purple-400 mt-2">
-                  {stats.diocesisActivas} <span className="text-slate-400">/</span> {stats.rolesRegistrados}
+                <p className="text-sm font-bold text-[#E6E7E8] uppercase tracking-widest">Distribución</p>
+                <p className="text-2xl md:text-3xl font-black text-[#EC008C] mt-2">
+                  {stats.diocesisActivas} <span className="text-[#E6E7E8]">/</span> {stats.rolesRegistrados}
                 </p>
               </div>
               <div className="p-3 bg-white/10 rounded-xl">
-                <Network className="text-purple-400" size={24} />
+                <Network className="text-[#EC008C]" size={24} />
               </div>
             </div>
             <div className="mt-4 flex items-center gap-2 text-sm">
-              <MapPin size={14} className="text-slate-400" />
-              <span className="text-slate-400">{stats.diocesisActivas} diócesis activas</span>
+              <MapPin size={14} className="text-[#E6E7E8]" />
+              <span className="text-[#E6E7E8]">{stats.diocesisActivas} diócesis activas</span>
             </div>
             <div className="mt-2 flex items-center gap-2 text-sm">
-              <UserCheck size={14} className="text-slate-400" />
-              <span className="text-slate-400">{stats.rolesRegistrados} roles registrados</span>
+              <UserCheck size={14} className="text-[#E6E7E8]" />
+              <span className="text-[#E6E7E8]">{stats.rolesRegistrados} roles registrados</span>
             </div>
           </motion.div>
         </div>
@@ -723,11 +733,11 @@ export default function AdminDashboard() {
                   <ChartLine size={20} />
                   Tendencia Temporal
                 </h3>
-                <p className="text-slate-400 text-sm">Inscripciones y recaudo por día</p>
+                <p className="text-[#E6E7E8] text-sm">Inscripciones y recaudo por día</p>
               </div>
               <div className="flex gap-2">
                 <button className="p-2 rounded-lg hover:bg-white/10 transition-colors">
-                  <Maximize2 size={16} className="text-slate-400" />
+                  <Maximize2 size={16} className="text-[#E6E7E8]" />
                 </button>
               </div>
             </div>
@@ -739,15 +749,17 @@ export default function AdminDashboard() {
                     dataKey="date" 
                     stroke="#ffffff60" 
                     fontSize={12}
+                    tick={{ fill: '#E6E7E8' }}
                   />
                   <YAxis 
                     stroke="#ffffff60" 
                     fontSize={12}
+                    tick={{ fill: '#E6E7E8' }}
                     tickFormatter={(value) => value.toLocaleString()}
                   />
                   <Tooltip 
                     contentStyle={{ 
-                      backgroundColor: '#1e293b', 
+                      backgroundColor: '#1E2D69', 
                       borderColor: '#ffffff20', 
                       color: 'white',
                       borderRadius: '8px'
@@ -757,19 +769,21 @@ export default function AdminDashboard() {
                       return [value, name === 'cantidad' ? 'Inscritos' : name];
                     }}
                   />
-                  <Legend />
+                  <Legend 
+                    formatter={(value) => <span className="text-[#E6E7E8]">{value}</span>}
+                  />
                   <Bar 
                     dataKey="cantidad" 
-                    fill="#8b5cf6" 
+                    fill="#009944" 
                     name="Inscritos"
                     radius={[4, 4, 0, 0]}
                   />
                   <Line 
                     type="monotone" 
                     dataKey="recaudo" 
-                    stroke="#10b981" 
+                    stroke="#EC008C" 
                     strokeWidth={2}
-                    dot={{ strokeWidth: 2, r: 4 }}
+                    dot={{ strokeWidth: 2, r: 4, fill: '#EC008C' }}
                     activeDot={{ r: 6 }}
                     name="Recaudo"
                   />
@@ -791,13 +805,13 @@ export default function AdminDashboard() {
                   <ChartPie size={20} />
                   Distribución por Estado
                 </h3>
-                <p className="text-slate-400 text-sm">Estado de las inscripciones</p>
+                <p className="text-[#E6E7E8] text-sm">Estado de las inscripciones</p>
               </div>
               <div className="flex items-center gap-2">
                 <div className="flex gap-1">
-                  <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
-                  <div className="w-2 h-2 bg-amber-500 rounded-full"></div>
-                  <div className="w-2 h-2 bg-rose-500 rounded-full"></div>
+                  <div className="w-2 h-2 bg-[#009944] rounded-full"></div>
+                  <div className="w-2 h-2 bg-[#FFF200] rounded-full"></div>
+                  <div className="w-2 h-2 bg-[#ED1C24] rounded-full"></div>
                 </div>
               </div>
             </div>
@@ -821,7 +835,7 @@ export default function AdminDashboard() {
                   </Pie>
                   <Tooltip 
                     contentStyle={{ 
-                      backgroundColor: '#1e293b', 
+                      backgroundColor: '#1E2D69', 
                       borderColor: '#ffffff20', 
                       color: 'white',
                       borderRadius: '8px'
@@ -829,9 +843,7 @@ export default function AdminDashboard() {
                     formatter={(value, name) => [value, name]}
                   />
                   <Legend 
-                    formatter={(value, entry) => (
-                      <span className="text-slate-300">{value}</span>
-                    )}
+                    formatter={(value) => <span className="text-[#E6E7E8]">{value}</span>}
                   />
                 </PieChart>
               </ResponsiveContainer>
@@ -854,9 +866,9 @@ export default function AdminDashboard() {
                   <Building size={20} />
                   Top Diócesis
                 </h3>
-                <p className="text-slate-400 text-sm">Por cantidad de inscritos</p>
+                <p className="text-[#E6E7E8] text-sm">Por cantidad de inscritos</p>
               </div>
-              <div className="text-sm text-slate-400">
+              <div className="text-sm text-[#E6E7E8]">
                 Total: {stats.diocesisActivas}
               </div>
             </div>
@@ -874,15 +886,17 @@ export default function AdminDashboard() {
                     height={60}
                     stroke="#ffffff60"
                     fontSize={12}
+                    tick={{ fill: '#E6E7E8' }}
                     interval={0}
                   />
                   <YAxis 
                     stroke="#ffffff60"
                     fontSize={12}
+                    tick={{ fill: '#E6E7E8' }}
                   />
                   <Tooltip 
                     contentStyle={{ 
-                      backgroundColor: '#1e293b', 
+                      backgroundColor: '#1E2D69', 
                       borderColor: '#ffffff20', 
                       color: 'white',
                       borderRadius: '8px'
@@ -891,7 +905,7 @@ export default function AdminDashboard() {
                   />
                   <Bar 
                     dataKey="value" 
-                    fill="#8b5cf6"
+                    fill="#009944"
                     radius={[4, 4, 0, 0]}
                   >
                     {stats.dioChartData.map((entry, index) => (
@@ -911,8 +925,8 @@ export default function AdminDashboard() {
                         x2="0"
                         y2="1"
                       >
-                        <stop offset="0%" stopColor="#8b5cf6" stopOpacity={0.8} />
-                        <stop offset="100%" stopColor="#8b5cf6" stopOpacity={0.2} />
+                        <stop offset="0%" stopColor="#009944" stopOpacity={0.8} />
+                        <stop offset="100%" stopColor="#009944" stopOpacity={0.2} />
                       </linearGradient>
                     ))}
                   </defs>
@@ -934,9 +948,9 @@ export default function AdminDashboard() {
                   <Crown size={20} />
                   Distribución por Rol
                 </h3>
-                <p className="text-slate-400 text-sm">Segmentación de participantes</p>
+                <p className="text-[#E6E7E8] text-sm">Segmentación de participantes</p>
               </div>
-              <div className="text-sm text-slate-400">
+              <div className="text-sm text-[#E6E7E8]">
                 Total: {stats.rolesRegistrados}
               </div>
             </div>
@@ -960,7 +974,7 @@ export default function AdminDashboard() {
                   </Pie>
                   <Tooltip 
                     contentStyle={{ 
-                      backgroundColor: '#1e293b', 
+                      backgroundColor: '#1E2D69', 
                       borderColor: '#ffffff20', 
                       color: 'white',
                       borderRadius: '8px'
@@ -968,9 +982,7 @@ export default function AdminDashboard() {
                     formatter={(value, name) => [value, name]}
                   />
                   <Legend 
-                    formatter={(value, entry) => (
-                      <span className="text-slate-300">{value}</span>
-                    )}
+                    formatter={(value) => <span className="text-[#E6E7E8]">{value}</span>}
                   />
                 </PieChart>
               </ResponsiveContainer>
@@ -991,7 +1003,7 @@ export default function AdminDashboard() {
                 <TargetIcon size={20} />
                 Rendimiento por Diócesis
               </h3>
-              <p className="text-slate-400 text-sm">Comparación de las 5 principales diócesis</p>
+              <p className="text-[#E6E7E8] text-sm">Comparación de las 5 principales diócesis</p>
             </div>
           </div>
           <div className="h-80">
@@ -1002,27 +1014,31 @@ export default function AdminDashboard() {
                   dataKey="subject" 
                   stroke="#ffffff60"
                   fontSize={12}
+                  tick={{ fill: '#E6E7E8' }}
                 />
                 <PolarRadiusAxis 
                   stroke="#ffffff60"
                   fontSize={10}
+                  tick={{ fill: '#E6E7E8' }}
                 />
                 <Radar
                   name="Inscripciones"
                   dataKey="A"
-                  stroke="#8b5cf6"
-                  fill="#8b5cf6"
+                  stroke="#009944"
+                  fill="#009944"
                   fillOpacity={0.3}
                 />
                 <Tooltip 
                   contentStyle={{ 
-                    backgroundColor: '#1e293b', 
+                    backgroundColor: '#1E2D69', 
                     borderColor: '#ffffff20', 
                     color: 'white',
                     borderRadius: '8px'
                   }}
                 />
-                <Legend />
+                <Legend 
+                  formatter={(value) => <span className="text-[#E6E7E8]">{value}</span>}
+                />
               </RadarChart>
             </ResponsiveContainer>
           </div>
@@ -1038,20 +1054,20 @@ export default function AdminDashboard() {
           <div className="flex items-center justify-between mb-8">
             <div>
               <h3 className="text-2xl font-bold text-white">Herramientas de Desarrollo</h3>
-              <p className="text-slate-400">Generación y gestión de datos de prueba</p>
+              <p className="text-[#E6E7E8]">Generación y gestión de datos de prueba</p>
             </div>
-            <FlaskConical className="text-violet-400" size={28} />
+            <FlaskConical className="text-[#009944]" size={28} />
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="p-6 bg-gradient-to-br from-violet-600/20 to-cyan-500/20 rounded-2xl border border-white/10">
+            <div className="p-6 bg-gradient-to-br from-[#009944]/20 to-[#1E5CAA]/20 rounded-2xl border border-white/10">
               <div className="flex items-start justify-between mb-6">
                 <div>
-                  <div className="w-14 h-14 bg-gradient-to-br from-violet-600/30 to-cyan-500/30 rounded-2xl flex items-center justify-center mb-4">
+                  <div className="w-14 h-14 bg-gradient-to-br from-[#009944]/30 to-[#1E5CAA]/30 rounded-2xl flex items-center justify-center mb-4">
                     <Zap className="text-white" size={28} />
                   </div>
                   <h4 className="text-xl font-bold text-white mb-3">Generar Datos de Prueba</h4>
-                  <p className="text-slate-300 mb-6">
+                  <p className="text-[#E6E7E8] mb-6">
                     Crea un evento completo con 250 inscripciones realistas para pruebas y desarrollo.
                     Perfecto para testing y demostraciones.
                   </p>
@@ -1063,7 +1079,7 @@ export default function AdminDashboard() {
                   whileTap={{ scale: 0.98 }}
                   onClick={handleGenerateGhostData}
                   disabled={isProcessing}
-                  className="w-full py-4 bg-gradient-to-r from-violet-600 to-cyan-500 text-white font-bold rounded-xl hover:shadow-lg hover:shadow-violet-500/30 transition-all flex items-center justify-center gap-3 disabled:opacity-50"
+                  className="w-full py-4 bg-gradient-to-r from-[#009944] to-[#1E5CAA] text-white font-bold rounded-xl hover:shadow-lg hover:shadow-[#009944]/30 transition-all flex items-center justify-center gap-3 disabled:opacity-50"
                 >
                   {isProcessing ? (
                     <>
@@ -1077,35 +1093,35 @@ export default function AdminDashboard() {
                     </>
                   )}
                 </motion.button>
-                <div className="grid grid-cols-2 gap-2 text-sm text-slate-400">
+                <div className="grid grid-cols-2 gap-2 text-sm text-[#E6E7E8]">
                   <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-violet-500 rounded-full"></div>
+                    <div className="w-2 h-2 bg-[#009944] rounded-full"></div>
                     <span>1 evento</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-cyan-500 rounded-full"></div>
+                    <div className="w-2 h-2 bg-[#1E5CAA] rounded-full"></div>
                     <span>250 registros</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
+                    <div className="w-2 h-2 bg-[#FFF200] rounded-full"></div>
                     <span>8 diócesis</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-amber-500 rounded-full"></div>
+                    <div className="w-2 h-2 bg-[#EC008C] rounded-full"></div>
                     <span>5 roles</span>
                   </div>
                 </div>
               </div>
             </div>
             
-            <div className="p-6 bg-gradient-to-br from-rose-600/20 to-amber-500/20 rounded-2xl border border-white/10">
+            <div className="p-6 bg-gradient-to-br from-[#ED1C24]/20 to-[#FFF200]/20 rounded-2xl border border-white/10">
               <div className="flex items-start justify-between mb-6">
                 <div>
-                  <div className="w-14 h-14 bg-gradient-to-br from-rose-600/30 to-amber-500/30 rounded-2xl flex items-center justify-center mb-4">
+                  <div className="w-14 h-14 bg-gradient-to-br from-[#ED1C24]/30 to-[#FFF200]/30 rounded-2xl flex items-center justify-center mb-4">
                     <Trash2 className="text-white" size={28} />
                   </div>
                   <h4 className="text-xl font-bold text-white mb-3">Limpiar Datos de Prueba</h4>
-                  <p className="text-slate-300 mb-6">
+                  <p className="text-[#E6E7E8] mb-6">
                     Elimina todos los eventos y datos generados por el laboratorio de pruebas.
                     Esta acción no afecta los datos reales del sistema.
                   </p>
@@ -1117,7 +1133,7 @@ export default function AdminDashboard() {
                   whileTap={{ scale: 0.98 }}
                   onClick={handlePurgeGhostData}
                   disabled={isProcessing}
-                  className="w-full py-4 bg-white/10 backdrop-blur-sm border border-rose-500/20 text-white font-bold rounded-xl hover:bg-white/15 transition-colors flex items-center justify-center gap-3 disabled:opacity-50"
+                  className="w-full py-4 bg-white/10 backdrop-blur-sm border border-[#ED1C24]/20 text-white font-bold rounded-xl hover:bg-white/15 transition-colors flex items-center justify-center gap-3 disabled:opacity-50"
                 >
                   {isProcessing ? (
                     <>
@@ -1131,8 +1147,8 @@ export default function AdminDashboard() {
                     </>
                   )}
                 </motion.button>
-                <div className="p-3 bg-rose-500/10 border border-rose-500/20 rounded-lg">
-                  <p className="text-sm text-rose-300 font-medium">
+                <div className="p-3 bg-[#ED1C24]/10 border border-[#ED1C24]/20 rounded-lg">
+                  <p className="text-sm text-[#ED1C24] font-medium">
                     ⚠️ Advertencia: Esta acción elimina permanentemente todos los datos de prueba.
                   </p>
                 </div>
@@ -1145,47 +1161,47 @@ export default function AdminDashboard() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
           <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl p-6">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-emerald-500/20 rounded-xl flex items-center justify-center">
-                <CheckCircle2 className="text-emerald-400" size={24} />
+              <div className="w-12 h-12 bg-[#009944]/20 rounded-xl flex items-center justify-center">
+                <CheckCircle2 className="text-[#009944]" size={24} />
               </div>
               <div>
-                <p className="text-sm font-bold text-slate-400">Tasa de Éxito</p>
-                <p className="text-2xl font-black text-emerald-400">{stats.tasaAprobacion.toFixed(1)}%</p>
+                <p className="text-sm font-bold text-[#E6E7E8]">Tasa de Éxito</p>
+                <p className="text-2xl font-black text-[#009944]">{stats.tasaAprobacion.toFixed(1)}%</p>
               </div>
             </div>
-            <p className="text-sm text-slate-400 mt-4">Inscripciones aprobadas vs totales</p>
+            <p className="text-sm text-[#E6E7E8] mt-4">Inscripciones aprobadas vs totales</p>
           </div>
           
           <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl p-6">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center">
-                <Home className="text-blue-400" size={24} />
+              <div className="w-12 h-12 bg-[#1E5CAA]/20 rounded-xl flex items-center justify-center">
+                <Home className="text-[#1E5CAA]" size={24} />
               </div>
               <div>
-                <p className="text-sm font-bold text-slate-400">Hospedajes</p>
-                <p className="text-2xl font-black text-blue-400">{stats.hospedajes}</p>
+                <p className="text-sm font-bold text-[#E6E7E8]">Hospedajes</p>
+                <p className="text-2xl font-black text-[#1E5CAA]">{stats.hospedajes}</p>
               </div>
             </div>
-            <p className="text-sm text-slate-400 mt-4">Solicitudes de alojamiento</p>
+            <p className="text-sm text-[#E6E7E8] mt-4">Solicitudes de alojamiento</p>
           </div>
           
           <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl p-6">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center">
-                <DatabaseBackup className="text-purple-400" size={24} />
+              <div className="w-12 h-12 bg-[#EC008C]/20 rounded-xl flex items-center justify-center">
+                <DatabaseBackup className="text-[#EC008C]" size={24} />
               </div>
               <div>
-                <p className="text-sm font-bold text-slate-400">Base de Datos</p>
-                <p className="text-2xl font-black text-purple-400">{dbData.length}</p>
+                <p className="text-sm font-bold text-[#E6E7E8]">Base de Datos</p>
+                <p className="text-2xl font-black text-[#EC008C]">{dbData.length}</p>
               </div>
             </div>
-            <p className="text-sm text-slate-400 mt-4">Registros totales</p>
+            <p className="text-sm text-[#E6E7E8] mt-4">Registros totales</p>
           </div>
         </div>
 
         {/* Footer */}
         <div className="mt-12 pt-8 border-t border-white/10">
-          <div className="flex flex-col md:flex-row justify-between items-center text-slate-500 text-sm">
+          <div className="flex flex-col md:flex-row justify-between items-center text-[#E6E7E8] text-sm">
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">
                 <Shield size={14} />

@@ -58,9 +58,10 @@ export default function RolesPage() {
             <nav className="space-y-1">
               {[
                 { id: "resumen", label: "Resumen", icon: BarChart3 },
-                { id: "nuevo", label: rolEditando ? "Editar Rol" : "Añadir Rol", icon: UserPlus2 },
+                //{ id: "nuevo", label: rolEditando ? "Editar Rol" : "Añadir Rol", icon: UserPlus2 },
                 { id: "gestion", label: "Gestionar roles", icon: Settings2 },
-{ id: "config_metodo", label: "Configuración de roles", icon: Settings2 },              ].map((item) => (
+                //{ id: "config_metodo", label: "Configuración de roles", icon: Settings2 },
+                              ].map((item) => (
                 <button 
                   key={item.id}
                   onClick={() => {
