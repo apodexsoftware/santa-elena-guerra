@@ -46,7 +46,6 @@ export async function POST(request: Request) {
       .from('transacciones')
       .update({
         estado: nuevoEstado,
-        wompi_transaction_id: wompiTxId,
         updated_at: new Date().toISOString()
       })
       .eq('referencia', reference)
