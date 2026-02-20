@@ -11,6 +11,7 @@ export async function POST(request: Request) {
     const payload = await request.json();
 
     console.log('EVENT:', payload.event);
+    console.log('Webhook Wompi payload:', JSON.stringify(payload, null, 2))
 
     // ✅ SOLO este evento importa
     if (payload.event !== 'transaction.updated') {

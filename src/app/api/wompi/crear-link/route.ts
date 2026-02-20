@@ -1,103 +1,107 @@
-import { NextResponse } from 'next/server';
-import { createClient } from '@/utils/supabase/server';
-
+import { NextResponse } from 'next/server'
+import { createClient } from '@/utils/supabase/server'
 
 export async function POST(request: Request) {
   try {
-    const supabase = createClient();
-    const { 
-      evento_id, 
-      diocesis_id,   // UUID de la diócesis
-      diocesis_nombre, // Nombre para referencia (opcional)
-      inscripciones, 
-      total, 
-      email_contacto 
-    } = await request.json();
+    const supabase = await createClient()
 
-    // Validar datos requeridos
-    if (!evento_id || !diocesis_id || !inscripciones || !total) {
-      console.error('Faltan datos:', { evento_id, diocesis_id, inscripciones, total });
-      return NextResponse.json({ 
-        error: 'Faltan datos requeridos' 
-      }, { status: 400 });
+    const {
+      evento_id,
+      diocesis_id,
+      diocesis_nombre,
+      inscripciones,
+      total,
+      email_contacto
+    } = await request.json()
+
+    // 🔒 Validaciones básicas
+    if (!evento_id || !diocesis_id || !inscripciones?.length || !total) {
+      return NextResponse.json(
+        { error: 'Faltan datos requeridos' },
+        { status: 400 }
+      )
     }
 
-    // Configuración Wompi
-    const isProd = process.env.WOMPI_ENV === 'production';
-    const url = isProd 
-      ? 'https://production.wompi.co/v1/payment_links' 
-      : 'https://sandbox.wompi.co/v1/payment_links';
-    
-    const apiKey = isProd 
-      ? process.env.WOMPI_PRIVATE_KEY_PROD 
-      : process.env.WOMPI_PRIVATE_KEY_SANDBOX;
+    // 🌍 Configuración Wompi
+    const isProd = process.env.WOMPI_ENV === 'production'
+
+    const wompiUrl = isProd
+      ? 'https://production.wompi.co/v1/payment_links'
+      : 'https://sandbox.wompi.co/v1/payment_links'
+
+    const apiKey = isProd
+      ? process.env.WOMPI_PRIVATE_KEY_PROD
+      : process.env.WOMPI_PRIVATE_KEY_SANDBOX
 
     if (!apiKey) {
-      throw new Error('API Key de Wompi no configurada');
+      throw new Error('API Key de Wompi no configurada')
     }
 
-    const amountInCents = Math.round(total * 100);
-    const reference = `EV-${evento_id}-${Date.now()}`;
-
-    // Crear transacción en la base de datos
-    const { data: transaccion, error: txError } = await (await supabase)
+    // 1️⃣ Crear transacción SIN referencia
+    const { data: transaccion, error: txError } = await supabase
       .from('transacciones')
       .insert({
         evento_id,
-        diocesis_id,          // Guardar el ID
-        diocesis: diocesis_nombre,      // Opcional
-        referencia: reference,
+        diocesis_id,
+        diocesis: diocesis_nombre,
         monto_total: total,
         estado: 'pendiente',
         email_contacto: email_contacto || null,
-        detalles_inscripciones: inscripciones,
-        created_at: new Date().toISOString()
+        detalles_inscripciones: inscripciones
       })
       .select('id')
-      .single();
+      .single()
 
-    if (txError) throw txError;
+    if (txError) throw txError
 
-    // Crear inscripciones en estado pendiente, incluyendo diocesis_id
+    // 2️⃣ Generar referencia estable
+    const reference = `TX_12`
+
+    // 3️⃣ Guardar referencia en la transacción
+    await supabase
+      .from('transacciones')
+      .update({ referencia: reference })
+      .eq('id', transaccion.id)
+
+    // 4️⃣ Crear inscripciones en estado pendiente
     const inserts = inscripciones.map((insc: any) => ({
       nombre: insc.nombre,
       apellido: insc.apellido,
       documento: insc.documento,
       email: insc.email,
-      entidadSalud: insc.entidadSalud,  // Ajusta según nombre de columna
+      telefono: insc.telefono,
+      entidadSalud: insc.entidadSalud,
       segmentacion: insc.segmentacion,
       hospedaje: insc.hospedaje,
       precio_pactado: insc.precio_pactado,
-      telefono: insc.telefono,
-      mediodetransporte: insc.mediodetransporte, // Ajusta según nombre de columna,                       
+      mediodetransporte: insc.mediodetransporte,
       evento_id,
       diocesis: diocesis_nombre,
       estado: 'pendiente',
       transaccion_id: transaccion.id,
-      referencia_pago: reference,
-      created_at: new Date().toISOString()
-    }));
+      referencia_pago: reference
+    }))
 
-    const { error: insError } = await (await supabase)
+    const { error: insError } = await supabase
       .from('inscripciones')
-      .insert(inserts);
+      .insert(inserts)
 
-    if (insError) throw insError;
+    if (insError) throw insError
 
-    // Payload para Wompi
+    // 💰 Payload Wompi
     const payload = {
       name: `Inscripción Evento - ${diocesis_nombre || ''}`,
       description: `Inscripción para ${inscripciones.length} persona(s)`,
       single_use: true,
-      currency: "COP",
-      amount_in_cents: amountInCents,
+      currency: 'COP',
+      amount_in_cents: Math.round(total * 100),
       collect_shipping: false,
-      reference: reference,
-      redirect_url: `http://localhost:3000/inscripcion/confirmacion?tx=${transaccion.id}`,
+      reference,
+      redirect_url: `${process.env.NEXT_PUBLIC_APP_URL}/inscripcion/confirmacion?tx=${transaccion.id}`,
       customer_data: {
-        full_name: `${inscripciones[0]?.nombre} ${inscripciones[0]?.apellido}`,
-        email: inscripciones[0]?.email || email_contacto,
-        phone_number: "573000000000"
+        full_name: `${inscripciones[0].nombre} ${inscripciones[0].apellido}`,
+        email: inscripciones[0].email || email_contacto,
+        phone_number: '573000000000'
       },
       meta_data: {
         evento_id,
@@ -105,49 +109,54 @@ export async function POST(request: Request) {
         transaccion_id: transaccion.id,
         cantidad_personas: inscripciones.length
       }
-    };
+    }
 
-    const wompiRes = await fetch(url, {
+    // 5️⃣ Crear link de pago en Wompi
+    const wompiRes = await fetch(wompiUrl, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${apiKey}`,
+        Authorization: `Bearer ${apiKey}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(payload)
-    });
+    })
 
-    const wompiData = await wompiRes.json();
+    const wompiData = await wompiRes.json()
 
     if (!wompiRes.ok) {
-      console.error('Error Wompi:', wompiData);
-      await (await supabase)
+      await supabase
         .from('transacciones')
-        .update({ estado: 'error_wompi' })
-        .eq('id', transaccion.id);
-      return NextResponse.json({ error: 'Error creando link de pago', details: wompiData }, { status: 500 });
+        .update({ estado: 'rechazado' })
+        .eq('id', transaccion.id)
+
+      return NextResponse.json(
+        { error: 'Error creando link de pago', details: wompiData },
+        { status: 500 }
+      )
     }
 
-    await (await supabase)
+    // 6️⃣ Guardar respuesta Wompi
+    await supabase
       .from('transacciones')
-      .update({ 
+      .update({
         wompi_link_id: wompiData.data.id,
-        wompi_response: wompiData 
+        wompi_response: wompiData
       })
-      .eq('id', transaccion.id);
+      .eq('id', transaccion.id)
 
-    return NextResponse.json({ 
+    // ✅ Respuesta final
+    return NextResponse.json({
       success: true,
       url: `https://checkout.wompi.co/l/${wompiData.data.id}`,
       transaccion_id: transaccion.id,
-      referencia: reference,
-      wompi_data: wompiData
-    });
+      referencia: reference
+    })
 
   } catch (error: any) {
-    console.error('Error en API Wompi:', error);
-    return NextResponse.json({ 
-      error: 'Error interno del servidor',
-      details: error.message 
-    }, { status: 500 });
+    console.error('Error creando pago Wompi:', error)
+    return NextResponse.json(
+      { error: 'Error interno', details: error.message },
+      { status: 500 }
+    )
   }
 }
