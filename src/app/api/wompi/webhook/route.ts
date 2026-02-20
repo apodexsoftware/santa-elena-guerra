@@ -10,54 +10,55 @@ export async function POST(request: Request) {
   try {
     const payload = await request.json();
 
-    console.log('WEBHOOK PAYLOAD:', payload);
+    console.log('EVENT:', payload.event);
+
+    // ✅ SOLO este evento importa
+    if (payload.event !== 'transaction.updated') {
+      return NextResponse.json({ status: 'ignored' }, { status: 200 });
+    }
 
     const transaction = payload?.data?.transaction;
     if (!transaction) {
-      console.log('NO TRANSACTION');
-      return NextResponse.json({ status: 'ignored' }, { status: 200 });
+      throw new Error('Transaction missing');
     }
 
     const { reference, status, id: wompiTxId } = transaction;
 
-    console.log('TRANSACTION DATA:', {
-      reference,
-      status,
-      wompiTxId
-    });
-
     if (!reference) {
-      throw new Error('Referencia vacía');
+      throw new Error('Reference missing');
     }
 
-    // Mapear estados Wompi → internos
     let nuevoEstado: 'pendiente' | 'pagado' | 'rechazado';
 
-    if (status === 'APPROVED') nuevoEstado = 'pagado';
-    else if (status === 'DECLINED' || status === 'VOIDED' || status === 'ERROR') {
-      nuevoEstado = 'rechazado';
-    } else {
-      console.log('ESTADO NO MANEJADO:', status);
-      return NextResponse.json({ status: 'ignored' }, { status: 200 });
+    switch (status) {
+      case 'APPROVED':
+        nuevoEstado = 'pagado';
+        break;
+      case 'DECLINED':
+      case 'VOIDED':
+      case 'ERROR':
+        nuevoEstado = 'rechazado';
+        break;
+      default:
+        return NextResponse.json({ status: 'ignored' }, { status: 200 });
     }
 
-    // UPDATE TRANSACCION
-    const { data: txUpdated, error: errorTx } = await supabaseAdmin
+    // 🔄 Actualizar transacción
+    const { data: txUpdated } = await supabaseAdmin
       .from('transacciones')
       .update({
         estado: nuevoEstado,
+        wompi_transaction_id: wompiTxId,
         updated_at: new Date().toISOString()
       })
       .eq('referencia', reference)
       .select();
 
-    console.log('TRANSACCION UPDATED:', txUpdated);
+    console.log('TX UPDATED:', txUpdated);
 
-    if (errorTx) throw errorTx;
-
-    // UPDATE INSCRIPCIONES SOLO SI PAGADO
+    // 🔄 Actualizar inscripciones SOLO si pagado
     if (nuevoEstado === 'pagado') {
-      const { data: insUpdated, error: errorIns } = await supabaseAdmin
+      const { data: insUpdated } = await supabaseAdmin
         .from('inscripciones')
         .update({
           estado: 'pagado',
@@ -66,9 +67,7 @@ export async function POST(request: Request) {
         .eq('referencia_pago', reference)
         .select();
 
-      console.log('INSCRIPCIONES UPDATED:', insUpdated);
-
-      if (errorIns) throw errorIns;
+      console.log('INS UPDATED:', insUpdated);
     }
 
     return NextResponse.json({ status: 'ok' }, { status: 200 });

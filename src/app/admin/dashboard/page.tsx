@@ -33,6 +33,7 @@ import { es } from "date-fns/locale";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import { motion, AnimatePresence } from "framer-motion";
+import * as XLSX from "xlsx";
 
 // Nueva paleta de colores
 const COLORS = [
@@ -201,46 +202,56 @@ export default function AdminDashboard() {
     }
   };
 
-  const generarPDF = async () => {
-    if (!reportRef.current || exporting) return;
-    
-    setExporting(true);
-    try {
-      const element = reportRef.current;
-      const canvas = await html2canvas(element, {
-        scale: 2,
-        useCORS: true,
-        logging: false,
-        backgroundColor: "#1E2D69" // Azul oscuro de fondo
-      });
-      
-      const imgData = canvas.toDataURL("image/png");
-      const pdf = new jsPDF("p", "mm", "a4");
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-      
-      pdf.setFillColor(30, 45, 105); // #1E2D69
-      pdf.rect(0, 0, pdfWidth, pdfHeight, 'F');
-      
-      pdf.setFontSize(24);
-      pdf.setTextColor(255, 255, 255);
-      pdf.text("Reporte Dashboard", pdfWidth / 2, 20, { align: "center" });
-      
-      pdf.setFontSize(12);
-      pdf.setTextColor(230, 231, 232); // #E6E7E8
-      pdf.text(`Generado: ${format(new Date(), "dd/MM/yyyy HH:mm")}`, pdfWidth / 2, 30, { align: "center" });
-      pdf.text(`Total registros: ${dbData.length}`, pdfWidth / 2, 37, { align: "center" });
-      
-      pdf.addImage(imgData, "PNG", 10, 45, pdfWidth - 20, pdfHeight * (pdfWidth - 20) / pdfWidth);
-      
-      pdf.save(`Dashboard-Reporte-${format(new Date(), 'yyyy-MM-dd-HH-mm')}.pdf`);
-    } catch (error) {
-      console.error("Error generando PDF:", error);
-      alert("Error al generar el PDF");
-    } finally {
-      setExporting(false);
-    }
-  };
+  const generarXLSX = () => {
+  if (!dbData || dbData.length === 0) {
+    alert("No hay inscripciones para exportar");
+    return;
+  }
+
+  // 1. Transformar datos (orden + nombres humanos)
+  const data = dbData.map((i) => ({
+    ID: i.id,
+    Nombre: i.nombre,
+    Apellido: i.apellido,
+    Email: i.email,
+    Teléfono: i.telefono ?? "",
+    Documento: i.documento ?? "",
+    Diócesis: i.diocesis ?? "",
+    Segmentación: i.segmentacion ?? "",
+    "Entidad de Salud": i.entidadSalud ?? "",
+    Hospedaje: i.hospedaje ?? "",
+    "Medio de Transporte": i.mediodetransporte ?? "",
+    "Precio Pactado": Number(i.precio_pactado ?? 0),
+    "Monto Pagado": Number(i.monto_pagado ?? 0),
+    "Descuento (%)": Number(i.porcentaje_descuento_aplicado ?? 0),
+    Estado: i.estado ?? "",
+    "Referencia Pago": i.referencia_pago ?? "",
+    "Fecha Inscripción": format(new Date(i.created_at), "dd/MM/yyyy HH:mm")
+  }));
+
+  // 2. Crear hoja
+  const worksheet = XLSX.utils.json_to_sheet(data);
+
+  // 3. Ajustar ancho de columnas automáticamente
+  worksheet["!cols"] = Object.keys(data[0]).map((key) => ({
+    wch: Math.max(
+      key.length,
+      ...data.map((row) => String(row[key as keyof typeof row]).length)
+    )
+  }));
+
+  // 4. Crear libro
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Inscripciones");
+
+  // 5. Descargar archivo
+  const filename = `Inscripciones-${format(
+    new Date(),
+    "yyyy-MM-dd-HH-mm"
+  )}.xlsx`;
+
+  XLSX.writeFile(workbook, filename);
+};
 
   const filteredData = useMemo(() => {
     let filtered = dbData;
@@ -471,7 +482,7 @@ export default function AdminDashboard() {
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={generarPDF}
+                onClick={generarXLSX}
                 disabled={exporting}
                 className="px-6 py-3 bg-gradient-to-r from-[#ED1C24] to-[#EC008C] text-white font-bold rounded-xl hover:shadow-lg hover:shadow-[#ED1C24]/30 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
               >
