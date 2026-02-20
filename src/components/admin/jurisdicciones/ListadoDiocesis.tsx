@@ -284,13 +284,13 @@ export default function ListadoDiocesis({
   if (loading) return (
     <div className="p-20 flex flex-col items-center justify-center gap-4">
       <div className="relative">
-        <Loader2 className="animate-spin text-indigo-500" size={48} />
-        <div className="absolute inset-0 border-4 border-indigo-100 rounded-full animate-ping opacity-20"></div>
+        <Loader2 className="animate-spin text-[#009944]" size={48} />
+        <div className="absolute inset-0 border-4 border-[#009944]/20 rounded-full animate-ping opacity-20"></div>
       </div>
-      <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+      <p className="text-[10px] font-black uppercase tracking-widest text-[#1E2D69]/60">
         Cargando jurisdicciones...
       </p>
-      <p className="text-xs text-slate-500 text-center max-w-sm">
+      <p className="text-xs text-[#1E2D69]/40 text-center max-w-sm">
         Conectando con la base de datos de Supabase
       </p>
     </div>
@@ -299,71 +299,71 @@ export default function ListadoDiocesis({
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
       {/* Header */}
-      <div className="bg-gradient-to-r from-indigo-50 via-white to-white p-6 md:p-8 rounded-3xl border border-indigo-100 shadow-sm">
+      <div className="bg-gradient-to-r from-[#009944]/10 via-white to-white p-6 md:p-8 rounded-3xl border border-[#009944]/20 shadow-sm">
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
           <div className="flex-1">
             <div className="flex items-center gap-3 mb-3">
-              <div className="p-2 bg-indigo-100 rounded-xl">
-                <Globe2 className="text-indigo-500" size={20} />
+              <div className="p-2 bg-[#009944]/20 rounded-xl">
+                <Globe2 className="text-[#009944]" size={20} />
               </div>
               <div>
-                <span className="text-[10px] font-black uppercase tracking-widest text-indigo-500">
+                <span className="text-[10px] font-black uppercase tracking-widest text-[#009944]">
                   Evento Activo
                 </span>
-                <h1 className="text-3xl md:text-4xl font-black text-slate-900 uppercase italic leading-none tracking-tighter mt-1">
+                <h1 className="text-3xl md:text-4xl font-black text-[#1E2D69] uppercase italic leading-none tracking-tighter mt-1">
                   {evento?.nombre || "Sin Evento Activo"}
                 </h1>
               </div>
             </div>
             
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6">
-              <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
+              <div className="bg-white p-4 rounded-2xl border border-[#E6E7E8] shadow-sm">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 bg-blue-50 rounded-lg">
-                    <Building2 size={16} className="text-blue-500" />
+                  <div className="p-2 bg-[#1E5CAA]/10 rounded-lg">
+                    <Building2 size={16} className="text-[#1E5CAA]" />
                   </div>
                   <div>
-                    <p className="text-xs text-slate-500 font-bold uppercase tracking-wider">Jurisdicciones</p>
-                    <p className="text-xl font-black text-slate-900">{jurisdicciones.length}</p>
+                    <p className="text-xs text-[#1E2D69]/60 font-bold uppercase tracking-wider">Jurisdicciones</p>
+                    <p className="text-xl font-black text-[#1E2D69]">{jurisdicciones.length}</p>
                   </div>
                 </div>
               </div>
               
-              <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
+              <div className="bg-white p-4 rounded-2xl border border-[#E6E7E8] shadow-sm">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 bg-emerald-50 rounded-lg">
-                    <Users size={16} className="text-emerald-500" />
+                  <div className="p-2 bg-[#009944]/10 rounded-lg">
+                    <Users size={16} className="text-[#009944]" />
                   </div>
                   <div>
-                    <p className="text-xs text-slate-500 font-bold uppercase tracking-wider">Inscritos</p>
-                    <p className="text-xl font-black text-slate-900">{stats.totalInscritos}</p>
+                    <p className="text-xs text-[#1E2D69]/60 font-bold uppercase tracking-wider">Inscritos</p>
+                    <p className="text-xl font-black text-[#1E2D69]">{stats.totalInscritos}</p>
                   </div>
                 </div>
               </div>
               
-    
+              {/* Puedes agregar más estadísticas aquí si es necesario */}
             </div>
           </div>
           
           {configuracionEvento && (
-            <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm min-w-[260px]">
+            <div className="bg-white p-5 rounded-2xl border border-[#E6E7E8] shadow-sm min-w-[260px]">
               <div className="flex items-center gap-3 mb-4">
-                <div className="p-2 bg-indigo-100 rounded-lg">
-                  <Settings size={16} className="text-indigo-600" />
+                <div className="p-2 bg-[#009944]/20 rounded-lg">
+                  <Settings size={16} className="text-[#009944]" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold text-slate-900">Configuración</h3>
-                  <p className="text-xs text-slate-500">Modo de precios</p>
+                  <h3 className="text-sm font-bold text-[#1E2D69]">Configuración</h3>
+                  <p className="text-xs text-[#1E2D69]/60">Modo de precios</p>
                 </div>
               </div>
               
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-slate-600">Modo</span>
+                  <span className="text-sm text-[#1E2D69]/70">Modo</span>
                   <span className={`px-3 py-1 rounded-full text-xs font-bold ${
                     modoPrecioActual === 'global' 
-                      ? 'bg-emerald-100 text-emerald-700' 
-                      : 'bg-indigo-100 text-indigo-700'
+                      ? 'bg-[#009944]/20 text-[#009944]' 
+                      : 'bg-[#1E5CAA]/20 text-[#1E5CAA]'
                   }`}>
                     {modoPrecioActual === 'global' ? 'GLOBAL' : 'INDIVIDUAL'}
                   </span>
@@ -371,8 +371,8 @@ export default function ListadoDiocesis({
                 
                 {modoPrecioActual === 'global' && configuracionEvento.precio_global_base && (
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-slate-600">Precio Base</span>
-                    <span className="text-lg font-black text-emerald-600">
+                    <span className="text-sm text-[#1E2D69]/70">Precio Base</span>
+                    <span className="text-lg font-black text-[#009944]">
                       ${Number(configuracionEvento.precio_global_base).toLocaleString()}
                     </span>
                   </div>
@@ -386,21 +386,21 @@ export default function ListadoDiocesis({
       {/* Contenido principal */}
       <div className="space-y-6">
         {jurisdicciones.length === 0 ? (
-          <div className="bg-gradient-to-br from-slate-50 to-white border-2 border-dashed border-slate-200 rounded-3xl p-12 text-center">
-            <div className="inline-block p-4 bg-slate-100 rounded-2xl mb-6">
-              <AlertCircle className="text-slate-300" size={40} />
+          <div className="bg-gradient-to-br from-[#E6E7E8]/50 to-white border-2 border-dashed border-[#E6E7E8] rounded-3xl p-12 text-center">
+            <div className="inline-block p-4 bg-[#E6E7E8] rounded-2xl mb-6">
+              <AlertCircle className="text-[#1E2D69]/40" size={40} />
             </div>
-            <p className="text-slate-400 font-black uppercase text-[10px] tracking-[0.2em] mb-2">
+            <p className="text-[#1E2D69]/40 font-black uppercase text-[10px] tracking-[0.2em] mb-2">
               No hay jurisdicciones registradas
             </p>
-            <p className="text-slate-500 text-sm max-w-md mx-auto mb-6">
+            <p className="text-[#1E2D69]/60 text-sm max-w-md mx-auto mb-6">
               {evento 
                 ? `No hay sedes vinculadas al evento "${evento.nombre}".`
                 : "No hay un evento activo."}
             </p>
             <button 
               onClick={() => fetchDatosEvento()}
-              className="px-5 py-2.5 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded-xl font-bold text-sm flex items-center gap-2 mx-auto transition-colors"
+              className="px-5 py-2.5 bg-[#009944]/10 text-[#009944] hover:bg-[#009944]/20 rounded-xl font-bold text-sm flex items-center gap-2 mx-auto transition-colors"
             >
               <RefreshCw size={14} />
               Reintentar
@@ -410,14 +410,14 @@ export default function ListadoDiocesis({
           <>
             {/* Navegación por letras si hay muchas jurisdicciones */}
             {letrasGrupos.length > 3 && (
-              <div className="sticky top-2 z-10 bg-white/90 backdrop-blur-sm p-4 rounded-2xl border border-slate-100 shadow-sm">
+              <div className="sticky top-2 z-10 bg-white/90 backdrop-blur-sm p-4 rounded-2xl border border-[#E6E7E8] shadow-sm">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="text-xs font-bold text-slate-500 uppercase">Navegar:</span>
+                  <span className="text-xs font-bold text-[#1E2D69]/60 uppercase">Navegar:</span>
                   {letrasGrupos.map(letra => (
                     <a 
                       key={letra}
                       href={`#grupo-${letra}`}
-                      className="px-2.5 py-1 text-xs font-bold text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                      className="px-2.5 py-1 text-xs font-bold text-[#009944] hover:bg-[#009944]/10 rounded-lg transition-colors"
                     >
                       {letra}
                     </a>
@@ -431,10 +431,10 @@ export default function ListadoDiocesis({
               {letrasGrupos.map((letra) => (
                 <div key={letra} id={`grupo-${letra}`} className="space-y-4">
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-indigo-100 text-indigo-600 rounded-lg flex items-center justify-center font-black">
+                    <div className="w-8 h-8 bg-[#009944]/20 text-[#009944] rounded-lg flex items-center justify-center font-black">
                       {letra}
                     </div>
-                    <h3 className="text-lg font-black text-slate-900 uppercase">
+                    <h3 className="text-lg font-black text-[#1E2D69] uppercase">
                       {jurisdiccionesAgrupadas[letra].length} jurisdicciones
                     </h3>
                   </div>
@@ -451,23 +451,23 @@ export default function ListadoDiocesis({
                           key={item.id}
                           className={`bg-white rounded-2xl border-2 transition-all duration-300 overflow-hidden ${
                             isExpanded 
-                              ? 'border-indigo-200 shadow-lg' 
-                              : 'border-slate-50 hover:border-indigo-100 hover:shadow-md'
+                              ? 'border-[#009944] shadow-lg' 
+                              : 'border-[#E6E7E8] hover:border-[#009944]/50 hover:shadow-md'
                           }`}
                         >
                           <div 
-                            className="p-5 md:p-6 flex items-center justify-between cursor-pointer hover:bg-slate-50/50 transition-colors"
+                            className="p-5 md:p-6 flex items-center justify-between cursor-pointer hover:bg-[#E6E7E8]/20 transition-colors"
                             onClick={() => toggleExpand(item.id)}
                           >
                             <div className="flex items-center gap-4 flex-1">
                               <div className={`relative w-12 h-12 md:w-14 md:h-14 rounded-xl flex items-center justify-center transition-all ${
                                 isExpanded 
-                                  ? 'bg-indigo-100 text-indigo-600' 
-                                  : 'bg-slate-50 text-slate-400 group-hover:bg-indigo-50'
+                                  ? 'bg-[#009944]/20 text-[#009944]' 
+                                  : 'bg-[#E6E7E8] text-[#1E2D69]/40 group-hover:bg-[#009944]/10'
                               }`}>
                                 <MapPin size={20} strokeWidth={2.5} />
                                 {hasInscripciones && (
-                                  <div className="absolute -top-1 -right-1 w-5 h-5 bg-emerald-500 text-white rounded-full flex items-center justify-center text-[10px] font-bold">
+                                  <div className="absolute -top-1 -right-1 w-5 h-5 bg-[#009944] text-white rounded-full flex items-center justify-center text-[10px] font-bold">
                                     {inscripcionesCount}
                                   </div>
                                 )}
@@ -475,30 +475,31 @@ export default function ListadoDiocesis({
                               
                               <div className="flex-1 min-w-0">
                                 <div className="flex items-center gap-2 flex-wrap">
-                                  <h3 className="text-base md:text-lg font-black text-slate-900 uppercase italic tracking-tighter truncate">
+                                  <h3 className="text-base md:text-lg font-black text-[#1E2D69] uppercase italic tracking-tighter truncate">
                                     {item.nombre}
                                   </h3>
                                   
                                   {modoPrecioActual === 'individual' && item.precio_base && Number(item.precio_base) > 0 && (
-                                    <div className="px-2.5 py-1 bg-emerald-50 text-emerald-700 rounded-full text-xs font-bold shrink-0">
+                                    <div className="px-2.5 py-1 bg-[#009944]/10 text-[#009944] rounded-full text-xs font-bold shrink-0">
                                       ${Number(item.precio_base).toLocaleString()}
                                     </div>
                                   )}
                                 </div>
                                 
-                                {/*{item.email_encargado && (
+                                {/* Email comentado
+                                {item.email_encargado && (
                                   <div className="flex items-center gap-1.5 mt-1.5">
-                                    <Mail size={12} className="text-slate-400 shrink-0" />
-                                    <span className="text-sm text-slate-600 truncate">
+                                    <Mail size={12} className="text-[#1E2D69]/40 shrink-0" />
+                                    <span className="text-sm text-[#1E2D69]/70 truncate">
                                       {item.email_encargado}
                                     </span>
                                   </div>
-                                )}*/}
+                                )} */}
                                 
                                 {hasInscripciones && (
                                   <div className="flex items-center gap-1.5 mt-1.5">
-                                    <Users size={12} className="text-blue-400" />
-                                    <span className="text-xs text-blue-600 font-medium">
+                                    <Users size={12} className="text-[#1E5CAA]" />
+                                    <span className="text-xs text-[#1E5CAA] font-medium">
                                       {inscripcionesCount} inscrito{inscripcionesCount !== 1 ? 's' : ''}
                                     </span>
                                   </div>
@@ -514,8 +515,8 @@ export default function ListadoDiocesis({
                                 }}
                                 className={`p-2.5 rounded-lg transition-all ${
                                   isExpanded 
-                                    ? 'bg-slate-100 text-slate-700' 
-                                    : 'bg-slate-50 text-slate-400 hover:bg-slate-100'
+                                    ? 'bg-[#E6E7E8] text-[#1E2D69]' 
+                                    : 'bg-[#E6E7E8]/50 text-[#1E2D69]/50 hover:bg-[#E6E7E8]'
                                 }`}
                               >
                                 {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
@@ -525,32 +526,32 @@ export default function ListadoDiocesis({
                           
                           {/* Panel expandido */}
                           {isExpanded && (
-                            <div className="px-5 md:px-6 pb-5 md:pb-6 border-t border-slate-100 pt-5 animate-in fade-in">
+                            <div className="px-5 md:px-6 pb-5 md:pb-6 border-t border-[#E6E7E8] pt-5 animate-in fade-in">
                               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                                 <div className="space-y-4">
                                   <div>
-                                    <h4 className="text-sm font-bold text-slate-700 uppercase tracking-wide mb-3 flex items-center gap-2">
+                                    <h4 className="text-sm font-bold text-[#1E2D69] uppercase tracking-wide mb-3 flex items-center gap-2">
                                       <Shield size={14} />
                                       Información
                                     </h4>
                                     <div className="space-y-3">
                                       {/*
                                       <div>
-                                        <div className="text-xs text-slate-500 font-medium mb-1 flex items-center gap-2">
+                                        <div className="text-xs text-[#1E2D69]/60 font-medium mb-1 flex items-center gap-2">
                                           <Hash size={12} />
                                           ID
                                         </div>
-                                        <div className="text-sm font-mono text-slate-800 bg-slate-50 p-2.5 rounded-lg overflow-x-auto">
+                                        <div className="text-sm font-mono text-[#1E2D69] bg-[#E6E7E8] p-2.5 rounded-lg overflow-x-auto">
                                           {item.id}
                                         </div>
-                                      </div>*/}
+                                      </div> */}
                                       
                                       <div>
-                                        <div className="text-xs text-slate-500 font-medium mb-1 flex items-center gap-2">
+                                        <div className="text-xs text-[#1E2D69]/60 font-medium mb-1 flex items-center gap-2">
                                           <Calendar size={12} />
                                           Creado el
                                         </div>
-                                        <div className="text-sm text-slate-800">
+                                        <div className="text-sm text-[#1E2D69]">
                                           {new Date(item.created_at).toLocaleDateString('es-ES', {
                                             day: 'numeric',
                                             month: 'short',
@@ -564,17 +565,17 @@ export default function ListadoDiocesis({
                                 
                                 <div className="space-y-4">
                                   <div>
-                                    <h4 className="text-sm font-bold text-slate-700 uppercase tracking-wide mb-3 flex items-center gap-2">
+                                    <h4 className="text-sm font-bold text-[#1E2D69] uppercase tracking-wide mb-3 flex items-center gap-2">
                                       <Banknote size={14} />
                                       Precios
                                     </h4>
                                     <div className="space-y-3">
                                       {modoPrecioActual === 'individual' ? (
                                         <div>
-                                          <div className="text-xs text-slate-500 font-medium mb-1">
+                                          <div className="text-xs text-[#1E2D69]/60 font-medium mb-1">
                                             Precio Base
                                           </div>
-                                          <div className="flex items-center gap-2 text-xl font-black text-emerald-600">
+                                          <div className="flex items-center gap-2 text-xl font-black text-[#009944]">
                                             <Banknote size={18} />
                                             <span>
                                               ${Number(item.precio_base || 0).toLocaleString('es-ES')}
@@ -583,16 +584,16 @@ export default function ListadoDiocesis({
                                         </div>
                                       ) : (
                                         <div>
-                                          <div className="text-xs text-slate-500 font-medium mb-1">
+                                          <div className="text-xs text-[#1E2D69]/60 font-medium mb-1">
                                             Precio por diocesis
                                           </div>
-                                          <div className="flex items-center gap-2 text-xl font-black text-indigo-600">
+                                          <div className="flex items-center gap-2 text-xl font-black text-[#009944]">
                                             <Banknote size={18} />
                                             <span>
                                               ${Number(item.precio_base || 0).toLocaleString('es-ES')}
                                             </span>
                                           </div>
-                                          <p className="text-xs text-slate-500 mt-2">
+                                          <p className="text-xs text-[#1E2D69]/60 mt-2">
                                             Aplicado a todas las jurisdicciones
                                           </p>
                                         </div>
@@ -603,7 +604,7 @@ export default function ListadoDiocesis({
                               </div>
                               
                               {/* Acciones */}
-                              <div className="flex flex-col sm:flex-row justify-between items-center gap-4 pt-6 mt-6 border-t border-slate-100">
+                              <div className="flex flex-col sm:flex-row justify-between items-center gap-4 pt-6 mt-6 border-t border-[#E6E7E8]">
                                 <div className="flex items-center gap-3">
                                   {/*
                                   <button
@@ -611,18 +612,18 @@ export default function ListadoDiocesis({
                                       navigator.clipboard.writeText(item.id);
                                       toast.success('ID copiado al portapapeles');
                                     }}
-                                    className="px-4 py-2 bg-slate-50 text-slate-600 hover:bg-slate-100 rounded-xl font-bold text-sm flex items-center gap-2 transition-colors"
+                                    className="px-4 py-2 bg-[#E6E7E8] text-[#1E2D69] hover:bg-[#E6E7E8]/70 rounded-xl font-bold text-sm flex items-center gap-2 transition-colors"
                                   >
                                     <LinkIcon size={14} />
                                     Copiar ID
-                                  </button>*/}
+                                  </button> */}
                                 </div>
                                 
                                 <div className="flex items-center gap-3">
                                   {/*
                                   <button
                                     onClick={() => onEdit(item)}
-                                    className="px-4 py-2 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded-xl font-bold text-sm flex items-center gap-2 transition-colors"
+                                    className="px-4 py-2 bg-[#009944]/10 text-[#009944] hover:bg-[#009944]/20 rounded-xl font-bold text-sm flex items-center gap-2 transition-colors"
                                   >
                                     <Edit3 size={14} />
                                     Editar
@@ -633,8 +634,8 @@ export default function ListadoDiocesis({
                                     disabled={isDeleting || hasInscripciones}
                                     className={`px-4 py-2 rounded-xl font-bold text-sm flex items-center gap-2 transition-colors ${
                                       hasInscripciones
-                                        ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
-                                        : 'bg-rose-50 text-rose-600 hover:bg-rose-100'
+                                        ? 'bg-[#E6E7E8] text-[#1E2D69]/40 cursor-not-allowed'
+                                        : 'bg-[#ED1C24]/10 text-[#ED1C24] hover:bg-[#ED1C24]/20'
                                     }`}
                                   >
                                     {isDeleting ? (
@@ -654,8 +655,8 @@ export default function ListadoDiocesis({
                               </div>
                               
                               {hasInscripciones && (
-                                <div className="mt-4 p-3 bg-amber-50 border border-amber-100 rounded-xl">
-                                  <p className="text-xs text-amber-700 text-center">
+                                <div className="mt-4 p-3 bg-[#FFF200]/20 border border-[#FFF200] rounded-xl">
+                                  <p className="text-xs text-[#B41919] text-center">
                                     ⚠️ Esta jurisdicción tiene {inscripcionesCount} inscripciones y no puede ser eliminada
                                   </p>
                                 </div>
@@ -675,13 +676,13 @@ export default function ListadoDiocesis({
       
       {/* Footer */}
       {jurisdicciones.length > 0 && (
-        <div className="bg-white/80 backdrop-blur-sm border border-slate-200 rounded-2xl p-5">
+        <div className="bg-white/80 backdrop-blur-sm border border-[#E6E7E8] rounded-2xl p-5">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <div>
-              <p className="text-sm text-slate-600 font-medium">
-                <span className="font-bold text-slate-900">{jurisdicciones.length}</span> jurisdicciones
+              <p className="text-sm text-[#1E2D69]/70 font-medium">
+                <span className="font-bold text-[#1E2D69]">{jurisdicciones.length}</span> jurisdicciones
               </p>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-[#1E2D69]/50">
                 {stats.jurisdiccionesConInscripciones} con inscripciones • 
                 Actualizado: {new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
               </p>
@@ -690,7 +691,7 @@ export default function ListadoDiocesis({
             <div className="flex items-center gap-3">
               <button
                 onClick={fetchDatosEvento}
-                className="px-4 py-2 bg-slate-50 text-slate-600 hover:bg-slate-100 rounded-xl font-bold text-sm flex items-center gap-2 transition-colors"
+                className="px-4 py-2 bg-[#E6E7E8] text-[#1E2D69] hover:bg-[#E6E7E8]/70 rounded-xl font-bold text-sm flex items-center gap-2 transition-colors"
               >
                 <RefreshCw size={14} />
                 Actualizar

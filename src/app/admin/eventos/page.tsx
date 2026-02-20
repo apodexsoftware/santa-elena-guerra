@@ -27,7 +27,7 @@ export default function GestionEventosPage() {
   const sideMenuItems = [
     { id: "resumen", label: "Vista General", icon: BarChart3 },
     { id: "lista", label: "Todos los Eventos", icon: Layers },
-    { id: "crear", label: "Nuevo Evento", icon: PlusCircle },
+    //{ id: "crear", label: "Nuevo Evento", icon: PlusCircle },
   ];
 
   return (

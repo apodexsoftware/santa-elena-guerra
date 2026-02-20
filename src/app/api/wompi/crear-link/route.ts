@@ -1,19 +1,22 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 
+
 export async function POST(request: Request) {
   try {
     const supabase = createClient();
     const { 
       evento_id, 
-      diocesis, 
+      diocesis_id,   // UUID de la diócesis
+      diocesis_nombre, // Nombre para referencia (opcional)
       inscripciones, 
       total, 
       email_contacto 
     } = await request.json();
 
-    // Validar datos
-    if (!evento_id || !diocesis || !inscripciones || !total) {
+    // Validar datos requeridos
+    if (!evento_id || !diocesis_id || !inscripciones || !total) {
+      console.error('Faltan datos:', { evento_id, diocesis_id, inscripciones, total });
       return NextResponse.json({ 
         error: 'Faltan datos requeridos' 
       }, { status: 400 });
@@ -33,10 +36,7 @@ export async function POST(request: Request) {
       throw new Error('API Key de Wompi no configurada');
     }
 
-    // Convertir a centavos
     const amountInCents = Math.round(total * 100);
-
-    // Crear referencia única
     const reference = `EV-${evento_id}-${Date.now()}`;
 
     // Crear transacción en la base de datos
@@ -44,7 +44,8 @@ export async function POST(request: Request) {
       .from('transacciones')
       .insert({
         evento_id,
-        diocesis,
+        diocesis_id,          // Guardar el ID
+        diocesis: diocesis_nombre,      // Opcional
         referencia: reference,
         monto_total: total,
         estado: 'pendiente',
@@ -57,10 +58,20 @@ export async function POST(request: Request) {
 
     if (txError) throw txError;
 
-    // Crear las inscripciones en estado pendiente
-    const inserts = inscripciones.map((inscripcion: any) => ({
-      ...inscripcion,
+    // Crear inscripciones en estado pendiente, incluyendo diocesis_id
+    const inserts = inscripciones.map((insc: any) => ({
+      nombre: insc.nombre,
+      apellido: insc.apellido,
+      documento: insc.documento,
+      email: insc.email,
+      entidadSalud: insc.entidadSalud,  // Ajusta según nombre de columna
+      segmentacion: insc.segmentacion,
+      hospedaje: insc.hospedaje,
+      precio_pactado: insc.precio_pactado,
+      telefono: insc.telefono,
+      mediodetransporte: insc.mediodetransporte, // Ajusta según nombre de columna,                       
       evento_id,
+      diocesis: diocesis_nombre,
       estado: 'pendiente',
       transaccion_id: transaccion.id,
       referencia_pago: reference,
@@ -73,10 +84,10 @@ export async function POST(request: Request) {
 
     if (insError) throw insError;
 
-    // Crear payload para Wompi
+    // Payload para Wompi
     const payload = {
-      name: `Inscripción Evento - ${diocesis}`,
-      description: `Inscripción para ${inscripciones.length} persona(s) de ${diocesis}`,
+      name: `Inscripción Evento - ${diocesis_nombre || ''}`,
+      description: `Inscripción para ${inscripciones.length} persona(s)`,
       single_use: true,
       currency: "COP",
       amount_in_cents: amountInCents,
@@ -86,17 +97,16 @@ export async function POST(request: Request) {
       customer_data: {
         full_name: `${inscripciones[0]?.nombre} ${inscripciones[0]?.apellido}`,
         email: inscripciones[0]?.email || email_contacto,
-        phone_number: "573000000000" // Puedes agregar campo de teléfono si lo necesitas
+        phone_number: "573000000000"
       },
       meta_data: {
         evento_id,
-        diocesis,
+        diocesis_id,
         transaccion_id: transaccion.id,
         cantidad_personas: inscripciones.length
       }
     };
 
-    // Llamar a Wompi
     const wompiRes = await fetch(url, {
       method: 'POST',
       headers: {
@@ -110,20 +120,13 @@ export async function POST(request: Request) {
 
     if (!wompiRes.ok) {
       console.error('Error Wompi:', wompiData);
-      
-      // Actualizar estado de la transacción a fallido
       await (await supabase)
         .from('transacciones')
         .update({ estado: 'error_wompi' })
         .eq('id', transaccion.id);
-
-      return NextResponse.json({ 
-        error: 'Error creando link de pago', 
-        details: wompiData 
-      }, { status: 500 });
+      return NextResponse.json({ error: 'Error creando link de pago', details: wompiData }, { status: 500 });
     }
 
-    // Actualizar transacción con ID de Wompi
     await (await supabase)
       .from('transacciones')
       .update({ 

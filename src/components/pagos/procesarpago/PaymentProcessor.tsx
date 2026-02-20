@@ -1,13 +1,13 @@
-// components/PaymentProcessor.tsx
 "use client";
 
 import { useState } from 'react';
-import { Loader2, CreditCard, Shield, QrCode, Smartphone, CheckCircle } from 'lucide-react';
+import { Loader2, CreditCard, Shield, QrCode, Smartphone } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface PaymentProcessorProps {
   total: number;
-  diocesis: string;
+  diocesisId: string;        // UUID de la diócesis
+  diocesisNombre: string;     // Nombre para mostrar
   personas: any[];
   eventoId: number;
   emailContacto?: string;
@@ -17,7 +17,8 @@ interface PaymentProcessorProps {
 
 export default function PaymentProcessor({ 
   total, 
-  diocesis, 
+  diocesisId,
+  diocesisNombre,
   personas, 
   eventoId, 
   emailContacto,
@@ -35,7 +36,6 @@ export default function PaymentProcessor({
     setPaymentMethod('wompi');
 
     try {
-      // Preparar datos para enviar al backend
       const inscripciones = personas.map(persona => ({
         nombre: persona.nombre,
         apellido: persona.apellido,
@@ -44,20 +44,18 @@ export default function PaymentProcessor({
         entidadSalud: persona.entidadSalud,
         segmentacion: persona.segmentacion,
         hospedaje: persona.hospedaje,
-        precio_pactado: total / personas.length, // Dividir el total entre personas
-        diocesis,
-        metodoviaje: persona.mediodetransporte,
+        precio_pactado: total / personas.length,
+        mediodetransporte: persona.mediodetransporte,
         telefono: persona.telefono
       }));
 
       const response = await fetch('/api/wompi', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           evento_id: eventoId,
-          diocesis,
+          diocesis_id: diocesisId,
+          diocesis_nombre: diocesisNombre,
           inscripciones,
           total,
           email_contacto: emailContacto || personas[0]?.email
@@ -72,7 +70,6 @@ export default function PaymentProcessor({
 
       if (data.url) {
         setPaymentUrl(data.url);
-        // Redirigir al usuario a Wompi
         window.location.href = data.url;
         onSuccess?.(data);
       }
@@ -86,7 +83,6 @@ export default function PaymentProcessor({
 
   return (
     <div className="space-y-6">
-      {/* Métodos de pago */}
       <div className="space-y-4">
         <h4 className="text-sm font-bold text-[#1E2D69] uppercase">Selecciona método de pago</h4>
         
@@ -133,7 +129,6 @@ export default function PaymentProcessor({
             </div>
           </motion.button>
 
-          {/* Puedes agregar más métodos de pago aquí */}
           <div className="p-6 rounded-2xl border-2 border-[#E6E7E8] bg-[#E6E7E8]/30 opacity-50 cursor-not-allowed">
             <div className="flex items-center gap-3 mb-3">
               <div className="p-3 rounded-xl bg-[#E6E7E8] text-[#1E2D69]/30">
@@ -151,7 +146,6 @@ export default function PaymentProcessor({
         </div>
       </div>
 
-      {/* Información de seguridad */}
       {!processing && (
         <motion.div
           initial={{ opacity: 0, y: 10 }}
@@ -170,7 +164,6 @@ export default function PaymentProcessor({
         </motion.div>
       )}
 
-      {/* Estado de procesamiento */}
       {processing && paymentMethod === 'wompi' && !paymentUrl && (
         <motion.div
           initial={{ opacity: 0 }}

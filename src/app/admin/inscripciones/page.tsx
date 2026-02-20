@@ -61,8 +61,8 @@ export default function InscripcionesPage() {
             <nav className="space-y-1">
               {[
                 { id: "resumen", label: "Resumen", icon: LayoutDashboard },
-                { id: "diocesis", label: "Por Diócesis", icon: Map },
-                { id: "rol", label: "Por Rol", icon: UserCircle },
+                //{ id: "diocesis", label: "Por Diócesis", icon: Map },
+                //{ id: "rol", label: "Por Rol", icon: UserCircle },
                 { id: "gestion", label: "Gestionar", icon: CheckSquare },
               ].map((item) => (
                 <button 
@@ -87,19 +87,20 @@ export default function InscripcionesPage() {
             
             <div className="bg-slate-50 p-1.5 rounded-2xl space-y-1">
               {[
-                { id: "todos", label: "Todo el tiempo" },
-                { id: "hoy", label: "Hoy" },
-                { id: "semana", label: "Última Semana" },
-                { id: "mes", label: "Este Mes" }
+                //{ id: "todos", label: "Todo el tiempo" },
+                //{ id: "hoy", label: "Hoy" },
+                //{ id: "semana", label: "Última Semana" },
+                //{ id: "mes", label: "Este Mes" }
               ].map((f) => (
                 <button 
-                  key={f.id}
-                  onClick={() => setTimeFilter(f.id)}
-                  className={`w-full text-left px-4 py-2.5 rounded-xl text-[11px] font-black uppercase tracking-tight transition-all ${
-                    timeFilter === f.id ? "bg-white text-indigo-600 shadow-sm" : "text-slate-400 hover:text-slate-600"
-                  }`}
+                  //key={f.id}
+                  //onClick={() => setTimeFilter(f.id)}
+                  //className={`w-full text-left px-4 py-2.5 rounded-xl text-[11px] font-black uppercase tracking-tight transition-all ${
+                    //timeFilter === f.id ? "bg-white text-indigo-600 shadow-sm" : "text-slate-400 hover:text-slate-600"
+                  //}`}
                 >
-                  {f.label}
+                  {// f.label}
+}
                 </button>
               ))}
             </div>
