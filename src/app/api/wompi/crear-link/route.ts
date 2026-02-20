@@ -55,7 +55,7 @@ export async function POST(request: Request) {
     if (txError) throw txError
 
     // 2️⃣ Generar referencia estable
-    const reference = `TX_12`
+    const reference = `TX_${transaccion.id}_${Date.now()}`
 
     // 3️⃣ Guardar referencia en la transacción
     await supabase
