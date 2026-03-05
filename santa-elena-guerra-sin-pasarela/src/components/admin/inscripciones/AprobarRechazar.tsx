@@ -431,11 +431,13 @@ export default function ValidarComprobantes() {
 
   // NUEVO: Validar inscripción individual
 
+  // NUEVO: Rechazar inscripción individual
+
+// NUEVO: Validar inscripción individual
 const handleValidarIndividual = async (
   inscripcion: any,
   transaccion: TransaccionConsolidada
 ) => {
-
   if (!transaccion.tieneComprobante) {
     await Swal.fire({
       icon: "warning",
@@ -465,7 +467,6 @@ const handleValidarIndividual = async (
   setIsUpdatingIndividual(inscripcion.id);
 
   try {
-
     const { error } = await supabase
       .from("inscripciones")
       .update({
@@ -476,6 +477,53 @@ const handleValidarIndividual = async (
       .eq("id", inscripcion.id);
 
     if (!error) {
+      // ✅ ACTUALIZACIÓN OPTIMISTA - Actualizamos el estado local inmediatamente
+      setTransaccionesConsolidadas(prev => 
+        prev.map(t => {
+          if (t.id !== transaccion.id) return t;
+          
+          // Actualizamos la inscripción específica dentro de la transacción
+          const updatedInscripciones = t.inscripciones.map((i: any) => 
+            i.id === inscripcion.id 
+              ? { ...i, estado: 'aprobada', monto_pagado: inscripcion.precio_pactado || 0 }
+              : i
+          );
+
+          // Recalculamos el estado de la transacción
+          const todosAprobados = updatedInscripciones.every((i: any) => i.estado === 'aprobada');
+          const algunoRechazado = updatedInscripciones.some((i: any) => i.estado === 'rechazada');
+          const nuevoEstado = todosAprobados ? 'aprobada' : 
+                             algunoRechazado ? 'rechazada' : 'pendiente';
+
+          return {
+            ...t,
+            inscripciones: updatedInscripciones,
+            estado: nuevoEstado
+          };
+        })
+      );
+
+      // ✅ Actualizamos también la transacción seleccionada inmediatamente
+      setSelectedTransaccion(prev => {
+        if (!prev || prev.id !== transaccion.id) return prev;
+        
+        const updatedInscripciones = prev.inscripciones.map((i: any) => 
+          i.id === inscripcion.id 
+            ? { ...i, estado: 'aprobada', monto_pagado: inscripcion.precio_pactado || 0 }
+            : i
+        );
+
+        const todosAprobados = updatedInscripciones.every((i: any) => i.estado === 'aprobada');
+        const algunoRechazado = updatedInscripciones.some((i: any) => i.estado === 'rechazada');
+        const nuevoEstado = todosAprobados ? 'aprobada' : 
+                           algunoRechazado ? 'rechazada' : 'pendiente';
+
+        return {
+          ...prev,
+          inscripciones: updatedInscripciones,
+          estado: nuevoEstado
+        };
+      });
 
       await Swal.fire({
         icon: "success",
@@ -485,50 +533,34 @@ const handleValidarIndividual = async (
         showConfirmButton: false
       });
 
+      // Refetch en background para sincronizar con la base de datos
       await fetchData();
 
-      // actualizar la transacción seleccionada
-      const updatedTransaccion = transaccionesConsolidadas.find(
-        (t) => t.id === transaccion.id
-      );
-
-      if (updatedTransaccion) {
-        setSelectedTransaccion(updatedTransaccion);
-      }
-
     } else {
-
       await Swal.fire({
         icon: "error",
         title: "Error al validar",
         text: error.message
       });
-
     }
 
   } catch (error) {
-
     console.error(error);
-
     await Swal.fire({
       icon: "error",
       title: "Error inesperado",
       text: "Ocurrió un problema al validar la inscripción"
     });
-
   } finally {
     setIsUpdatingIndividual(null);
   }
 };
 
-
-  // NUEVO: Rechazar inscripción individual
-
+// NUEVO: Rechazar inscripción individual
 const handleRechazarIndividual = async (
   inscripcion: any,
   transaccion: TransaccionConsolidada
 ) => {
-
   const { value: motivo, isConfirmed } = await Swal.fire({
     title: `Rechazar inscripción`,
     html: `<b>${inscripcion.nombre} ${inscripcion.apellido}</b>`,
@@ -552,7 +584,6 @@ const handleRechazarIndividual = async (
   setIsUpdatingIndividual(inscripcion.id);
 
   try {
-
     const { error } = await supabase
       .from("inscripciones")
       .update({
@@ -563,6 +594,53 @@ const handleRechazarIndividual = async (
       .eq("id", inscripcion.id);
 
     if (!error) {
+      // ✅ ACTUALIZACIÓN OPTIMISTA - Actualizamos el estado local inmediatamente
+      setTransaccionesConsolidadas(prev => 
+        prev.map(t => {
+          if (t.id !== transaccion.id) return t;
+          
+          // Actualizamos la inscripción específica dentro de la transacción
+          const updatedInscripciones = t.inscripciones.map((i: any) => 
+            i.id === inscripcion.id 
+              ? { ...i, estado: 'rechazada', motivo_rechazo: motivo }
+              : i
+          );
+
+          // Recalculamos el estado de la transacción
+          const todosAprobados = updatedInscripciones.every((i: any) => i.estado === 'aprobada');
+          const algunoRechazado = updatedInscripciones.some((i: any) => i.estado === 'rechazada');
+          const nuevoEstado = todosAprobados ? 'aprobada' : 
+                             algunoRechazado ? 'rechazada' : 'pendiente';
+
+          return {
+            ...t,
+            inscripciones: updatedInscripciones,
+            estado: nuevoEstado
+          };
+        })
+      );
+
+      // ✅ Actualizamos también la transacción seleccionada inmediatamente
+      setSelectedTransaccion(prev => {
+        if (!prev || prev.id !== transaccion.id) return prev;
+        
+        const updatedInscripciones = prev.inscripciones.map((i: any) => 
+          i.id === inscripcion.id 
+            ? { ...i, estado: 'rechazada', motivo_rechazo: motivo }
+            : i
+        );
+
+        const todosAprobados = updatedInscripciones.every((i: any) => i.estado === 'aprobada');
+        const algunoRechazado = updatedInscripciones.some((i: any) => i.estado === 'rechazada');
+        const nuevoEstado = todosAprobados ? 'aprobada' : 
+                           algunoRechazado ? 'rechazada' : 'pendiente';
+
+        return {
+          ...prev,
+          inscripciones: updatedInscripciones,
+          estado: nuevoEstado
+        };
+      });
 
       await Swal.fire({
         icon: "success",
@@ -572,36 +650,24 @@ const handleRechazarIndividual = async (
         showConfirmButton: false
       });
 
+      // Refetch en background para sincronizar con la base de datos
       await fetchData();
 
-      const updatedTransaccion = transaccionesConsolidadas.find(
-        (t) => t.id === transaccion.id
-      );
-
-      if (updatedTransaccion) {
-        setSelectedTransaccion(updatedTransaccion);
-      }
-
     } else {
-
       await Swal.fire({
         icon: "error",
         title: "Error al rechazar",
         text: error.message
       });
-
     }
 
   } catch (error) {
-
     console.error(error);
-
     await Swal.fire({
       icon: "error",
       title: "Error inesperado",
       text: "Ocurrió un problema al rechazar la inscripción"
     });
-
   } finally {
     setIsUpdatingIndividual(null);
   }
