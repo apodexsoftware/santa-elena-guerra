@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1766519766262,
+    "nombre": "SIMON",
+    "apellido": "GOA",
+    "email": "simon2001torres@gmail.com",
+    "telefono": "3132798560",
+    "diocesis": "dfsdfs",
+    "entidadSalud": "sura",
+    "segmentacion": "sacerdote",
+    "hospedaje": "si",
+    "rutaImagen": "/uploads/1766519766259-interface-3614766_1920.png",
+    "fechaRegistro": "2025-12-23T19:56:06.262Z",
+    "fechaAccion": "2025-12-23T20:16:29.249Z",
+    "motivoRechazo": null
+  },
+  {
+    "id": 1766522573086,
+    "nombre": "SIMON",
+    "apellido": "GOA",
+    "email": "simon2001torres@gmail.com",
+    "telefono": "3132798560",
+    "diocesis": "dfsdfs",
+    "entidadSalud": "sura",
+    "segmentacion": "sacerdote",
+    "hospedaje": "si",
+    "rutaImagen": "/uploads/1766522573044-Flyer_academia_de_ingles_ilustrativo_creativo_azul_(1).png",
+    "fechaRegistro": "2025-12-23T20:42:53.086Z",
+    "fechaAccion": "2025-12-23T20:43:06.631Z",
+    "motivoRechazo": null
+  }
+]
