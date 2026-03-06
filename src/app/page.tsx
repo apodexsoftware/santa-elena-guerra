@@ -183,40 +183,59 @@ export default function InscripcionPage() {
   }, []);
 
   const resumen = useMemo(() => {
-    const { config, dio, tipos } = dbData;
-    if (!config || !evento) return { total: 0, cantidad: 0 };
+  const { config, dio, tipos } = dbData;
+  if (!config || !evento) return { subtotal: 0, comision: 0, total: 0, cantidad: 0 };
 
-    const diocesisData = dio.find((d: any) => d.id === watchFields.diocesis) as any;
-    let subtotal = 0;
+  const diocesisData = dio.find((d: any) => d.id === watchFields.diocesis) as any;
 
-    (watchFields.personas || []).forEach((p: any) => {
-      const rol = tipos.find((t: any) => t.valor === p.segmentacion) as any;
-      let base = (config as any).modo_precio === 'global' 
+  let subtotal = 0;
+  let comision = 0;
+  let total = 0;
+
+  const commissionRate = Number(process.env.NEXT_PUBLIC_comission) || 0;
+
+  (watchFields.personas || []).forEach((p: any) => {
+    const rol = tipos.find((t: any) => t.valor === p.segmentacion) as any;
+
+    let base =
+      (config as any).modo_precio === 'global'
         ? Number((config as any).precio_global_base) || 0
         : Number(diocesisData?.precio_base) || 0;
 
-      let dto = 0;
-      if (rol && base > 0) {
-        dto = rol.metodo_activo === 'porcentaje'
+    let dto = 0;
+
+    if (rol && base > 0) {
+      dto =
+        rol.metodo_activo === 'porcentaje'
           ? base * ((Number(rol.descuento_porcentaje) || 0) / 100)
           : Number(rol.descuento_fijo) || 0;
-      }
+    }
 
-      let hospedaje = 0;
-      if (p.hospedaje === 'si') {
-        hospedaje = (config as any)?.usar_hospedaje_diocesis as boolean
-          ? Number(diocesisData?.precio_hospedaje_especifico) || 0
-          : Number((config as any)?.valor_hospedaje_general) || 0;
-      }
+    let hospedaje = 0;
 
-      subtotal += Math.max(0, base - dto + hospedaje);
-    });
+    if (p.hospedaje === 'si') {
+      hospedaje = (config as any)?.usar_hospedaje_diocesis
+        ? Number(diocesisData?.precio_hospedaje_especifico) || 0
+        : Number((config as any)?.valor_hospedaje_general) || 0;
+    }
 
-    return {
-      total: subtotal,
-      cantidad: watchFields.personas?.length || 0
-    };
-  }, [watchFields, dbData, evento]);
+    const precioPersona = Math.max(0, base - dto + hospedaje);
+
+    const comisionPersona = precioPersona * commissionRate;
+    const totalPersona = precioPersona + comisionPersona;
+
+    subtotal += precioPersona;
+    comision += comisionPersona;
+    total += totalPersona;
+  });
+
+  return {
+    subtotal,
+    comision,
+    total,
+    cantidad: watchFields.personas?.length || 0,
+  };
+}, [watchFields, dbData, evento]);
 
   const nextStep = async () => {
     const newTouched: Record<string, boolean> = { diocesis: true };
@@ -391,8 +410,12 @@ export default function InscripcionPage() {
 
             {step === 2 && (
               <div className="text-white rounded-xl p-4" style={{ background: `linear-gradient(135deg, ${colors.azul} 0%, ${colors.verde} 100%)` }}>
+                <p className="text-white/80 text-sm mb-1">Subtotal</p>
+                <p className="text-2xl font-bold">${(resumen.subtotal).toLocaleString()}</p>
+                <p className="text-white/80 text-sm mb-1">Comisión</p>
+                <p className="text-2xl font-bold">${(resumen.comision).toLocaleString()}</p>
                 <p className="text-white/80 text-sm mb-1">Total a pagar</p>
-                <p className="text-2xl font-bold">${resumen.total.toLocaleString()}</p>
+                <p className="text-2xl font-bold">${(resumen.total).toLocaleString()}</p>
                 <p className="text-sm mt-2 text-white/80">{resumen.cantidad} personas</p>
                 <p className="text-xs mt-1 text-white/60">Diócesis: {selectedDiocesis?.nombre}</p>
               </div>
@@ -746,6 +769,14 @@ export default function InscripcionPage() {
                     <div className="rounded-xl p-6" style={{ background: `linear-gradient(135deg, ${colors.azul} 0%, ${colors.verde} 100%)` }}>
                       <div className="space-y-3 text-white">
                         <div className="flex justify-between items-center border-b border-white/20 pb-2">
+                          <span className="text-white/80">Subtotal</span>
+                          <span className="text-3xl font-bold">${resumen.subtotal.toLocaleString()}</span>
+                        </div>
+                        <div className="flex justify-between items-center border-b border-white/20 pb-2">
+                          <span className="text-white/80">Comisión</span>
+                          <span className="text-3xl font-bold">${resumen.comision.toLocaleString()}</span>
+                        </div>
+                        <div className="flex justify-between items-center">
                           <span className="text-white/80">Total a pagar</span>
                           <span className="text-3xl font-bold">${resumen.total.toLocaleString()}</span>
                         </div>
