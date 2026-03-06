@@ -429,7 +429,7 @@ export default function ValidarComprobantes() {
   }
 };
 
-  // NUEVO: Validar inscripción individual
+  // NUEVO: Validar inscripción individuals
 
   // NUEVO: Rechazar inscripción individual
 
