@@ -2,9 +2,9 @@
 
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
-import { 
-  Loader2, Check, Send, 
-  User, 
+import {
+  Loader2, Check, Send,
+  User,
   FileText, Shield, Building2,
   BedDouble, Calendar,
   ChevronRight,
@@ -46,23 +46,21 @@ const colors = {
 };
 
 // Componente de paso
-const StepIndicator = ({ step, currentStep, title }: { 
-  step: number; 
+const StepIndicator = ({ step, currentStep, title }: {
+  step: number;
   currentStep: number;
   title: string;
 }) => (
-  <div className={`flex items-center gap-3 p-3 rounded-lg ${
-    currentStep >= step 
-      ? 'bg-[#E6E7E8]/50 text-[#1E2D69]' 
+  <div className={`flex items-center gap-3 p-3 rounded-lg ${currentStep >= step
+      ? 'bg-[#E6E7E8]/50 text-[#1E2D69]'
       : 'bg-[#E6E7E8]/30 text-[#1E2D69]/40'
-  }`}>
-    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
-      currentStep > step 
-        ? 'bg-[#009944] text-white' 
-        : currentStep === step 
-        ? 'bg-[#1E5CAA] text-white' 
-        : 'bg-[#E6E7E8]'
     }`}>
+    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${currentStep > step
+        ? 'bg-[#009944] text-white'
+        : currentStep === step
+          ? 'bg-[#1E5CAA] text-white'
+          : 'bg-[#E6E7E8]'
+      }`}>
       {currentStep > step ? <Check size={16} /> : step}
     </div>
     <span className="font-medium text-sm">{title}</span>
@@ -70,13 +68,13 @@ const StepIndicator = ({ step, currentStep, title }: {
 );
 
 // Campo de formulario
-const FormField = ({ 
-  label, 
-  error, 
+const FormField = ({
+  label,
+  error,
   children,
   touched
-}: { 
-  label: string; 
+}: {
+  label: string;
   error?: string;
   touched?: boolean;
   children: React.ReactNode;
@@ -86,13 +84,13 @@ const FormField = ({
     {children}
     <AnimatePresence>
       {error && touched && (
-        <motion.p 
+        <motion.p
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -10 }}
           className="text-[#ED1C24] text-xs flex items-center gap-1 mt-1"
         >
-          <AlertTriangle size={12}/>
+          <AlertTriangle size={12} />
           {error}
         </motion.p>
       )}
@@ -183,59 +181,59 @@ export default function InscripcionPage() {
   }, []);
 
   const resumen = useMemo(() => {
-  const { config, dio, tipos } = dbData;
-  if (!config || !evento) return { subtotal: 0, comision: 0, total: 0, cantidad: 0 };
+    const { config, dio, tipos } = dbData;
+    if (!config || !evento) return { subtotal: 0, comision: 0, total: 0, cantidad: 0 };
 
-  const diocesisData = dio.find((d: any) => d.id === watchFields.diocesis) as any;
+    const diocesisData = dio.find((d: any) => d.id === watchFields.diocesis) as any;
 
-  let subtotal = 0;
-  let comision = 0;
-  let total = 0;
+    let subtotal = 0;
+    let comision = 0;
+    let total = 0;
 
-  const commissionRate = Number(process.env.NEXT_PUBLIC_comission) || 0;
+    const commissionRate = Number(process.env.NEXT_PUBLIC_comission) || 0;
 
-  (watchFields.personas || []).forEach((p: any) => {
-    const rol = tipos.find((t: any) => t.valor === p.segmentacion) as any;
+    (watchFields.personas || []).forEach((p: any) => {
+      const rol = tipos.find((t: any) => t.valor === p.segmentacion) as any;
 
-    let base =
-      (config as any).modo_precio === 'global'
-        ? Number((config as any).precio_global_base) || 0
-        : Number(diocesisData?.precio_base) || 0;
+      let base =
+        (config as any).modo_precio === 'global'
+          ? Number((config as any).precio_global_base) || 0
+          : Number(diocesisData?.precio_base) || 0;
 
-    let dto = 0;
+      let dto = 0;
 
-    if (rol && base > 0) {
-      dto =
-        rol.metodo_activo === 'porcentaje'
-          ? base * ((Number(rol.descuento_porcentaje) || 0) / 100)
-          : Number(rol.descuento_fijo) || 0;
-    }
+      if (rol && base > 0) {
+        dto =
+          rol.metodo_activo === 'porcentaje'
+            ? base * ((Number(rol.descuento_porcentaje) || 0) / 100)
+            : Number(rol.descuento_fijo) || 0;
+      }
 
-    let hospedaje = 0;
+      let hospedaje = 0;
 
-    if (p.hospedaje === 'si') {
-      hospedaje = (config as any)?.usar_hospedaje_diocesis
-        ? Number(diocesisData?.precio_hospedaje_especifico) || 0
-        : Number((config as any)?.valor_hospedaje_general) || 0;
-    }
+      if (p.hospedaje === 'si') {
+        hospedaje = (config as any)?.usar_hospedaje_diocesis
+          ? Number(diocesisData?.precio_hospedaje_especifico) || 0
+          : Number((config as any)?.valor_hospedaje_general) || 0;
+      }
 
-    const precioPersona = Math.max(0, base - dto + hospedaje);
+      const precioPersona = Math.max(0, base - dto + hospedaje);
 
-    const comisionPersona = precioPersona * commissionRate;
-    const totalPersona = precioPersona + comisionPersona;
+      const comisionPersona = precioPersona * commissionRate;
+      const totalPersona = precioPersona + comisionPersona;
 
-    subtotal += precioPersona;
-    comision += comisionPersona;
-    total += totalPersona;
-  });
+      subtotal += precioPersona;
+      comision += comisionPersona;
+      total += totalPersona;
+    });
 
-  return {
-    subtotal,
-    comision,
-    total,
-    cantidad: watchFields.personas?.length || 0,
-  };
-}, [watchFields, dbData, evento]);
+    return {
+      subtotal,
+      comision,
+      total,
+      cantidad: watchFields.personas?.length || 0,
+    };
+  }, [watchFields, dbData, evento]);
 
   const nextStep = async () => {
     const newTouched: Record<string, boolean> = { diocesis: true };
@@ -272,7 +270,7 @@ export default function InscripcionPage() {
         const file = data.comprobante[0];
         const fileExt = file.name.split('.').pop();
         const fileName = `comprobante_${Date.now()}_${selectedDiocesis.id}.${fileExt}`;
-        
+
         const { error: uploadError } = await supabase.storage
           .from('comprobantes')
           .upload(fileName, file);
@@ -282,7 +280,7 @@ export default function InscripcionPage() {
         const { data: urlData } = supabase.storage
           .from('comprobantes')
           .getPublicUrl(fileName);
-        
+
         comprobanteUrl = urlData.publicUrl;
       }
 
@@ -346,10 +344,10 @@ export default function InscripcionPage() {
   if (submitSuccess) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4" style={{ backgroundColor: colors.grisClaro }}>
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="text-center max-w-md p-8 rounded-2xl shadow-lg" 
+          className="text-center max-w-md p-8 rounded-2xl shadow-lg"
           style={{ backgroundColor: 'white' }}
         >
           <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: `${colors.verde}20` }}>
@@ -360,13 +358,13 @@ export default function InscripcionPage() {
             Tus datos han sido registrados correctamente, próximamente recibirás más información por parte de la organización.
           </p>
           <p className="text-sm" style={{ color: colors.azulOscuro, opacity: 0.5 }}>
-<a
-  href="#"
-  style={{ color: colors.azul }}
-  onClick={() => window.location.href = ""}
->
-  Aceptar
-</a>
+            <a
+              href="#"
+              style={{ color: colors.azul }}
+              onClick={() => window.location.href = ""}
+            >
+              Aceptar
+            </a>
 
           </p>
         </motion.div>
@@ -377,7 +375,7 @@ export default function InscripcionPage() {
   return (
     <div className="min-h-screen py-8 px-4" style={{ backgroundColor: colors.grisClaro }}>
       <div className="max-w-4xl mx-auto">
-        
+
         {/* Header */}
         <div className="rounded-2xl shadow-sm p-6 mb-6" style={{ backgroundColor: 'white' }}>
           <div className="flex items-center gap-6">
@@ -396,14 +394,14 @@ export default function InscripcionPage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          
+
           {/* Sidebar */}
           <div className="lg:col-span-1 space-y-4">
             <div className="rounded-xl shadow-sm p-4" style={{ backgroundColor: 'white' }}>
               <StepIndicator step={1} currentStep={step} title="Datos de inscripción" />
               <StepIndicator step={2} currentStep={step} title="Comprobante de pago" />
             </div>
-            
+
             <div className="w-100 h-120 rounded-xl flex items-center justify-left shrink-0" style={{ backgroundColor: colors.grisClaro }}>
               <img src="./santaelena.jpeg" alt="EN CAR" className="w-70 h-120 object-contain" />
             </div>
@@ -428,18 +426,18 @@ export default function InscripcionPage() {
               <AnimatePresence mode="wait">
                 {step === 1 ? (
                   <motion.div key="step1" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-6">
-                    
+
                     {/* Diócesis */}
                     <div data-error={!!errors.diocesis}>
-                      <FormField 
-                        label="Diócesis *" 
-                        error={errors.diocesis?.message} 
+                      <FormField
+                        label="Diócesis *"
+                        error={errors.diocesis?.message}
                         touched={isFieldTouched('diocesis')}
                       >
-                        <select 
+                        <select
                           {...register("diocesis", { required: "Debe seleccionar una diócesis" })}
                           className="w-full rounded-lg p-3 focus:outline-none focus:ring-2 transition-all"
-                          style={{ 
+                          style={{
                             border: `1px solid ${errors.diocesis && isFieldTouched('diocesis') ? colors.rojo : colors.grisClaro}`,
                             color: colors.azulOscuro
                           }}
@@ -478,8 +476,8 @@ export default function InscripcionPage() {
                           <div className="flex justify-between items-center border-b pb-2" style={{ borderColor: colors.grisClaro }}>
                             <span className="font-medium" style={{ color: colors.azulOscuro }}>Persona {i + 1}</span>
                             {fields.length > 1 && (
-                              <button 
-                                onClick={() => remove(i)} 
+                              <button
+                                onClick={() => remove(i)}
                                 className="transition-colors hover:opacity-80 flex items-center gap-1 text-sm"
                                 style={{ color: colors.rojo }}
                               >
@@ -491,19 +489,19 @@ export default function InscripcionPage() {
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {/* Nombre */}
                             <div data-error={!!errors.personas?.[i]?.nombre}>
-                              <FormField 
-                                label="Nombres *" 
-                                error={getFieldError('nombre', i)} 
+                              <FormField
+                                label="Nombres *"
+                                error={getFieldError('nombre', i)}
                                 touched={isFieldTouched('nombre', i)}
                               >
-                                <input 
-                                  {...register(`personas.${i}.nombre`, { 
+                                <input
+                                  {...register(`personas.${i}.nombre`, {
                                     required: "El nombre es obligatorio",
                                     minLength: { value: 2, message: "Mínimo 2 caracteres" }
                                   })}
                                   onBlur={() => markAsTouched(`personas.${i}.nombre`)}
                                   className="w-full rounded-lg p-2.5 focus:outline-none focus:ring-2 transition-all"
-                                  style={{ 
+                                  style={{
                                     border: `1px solid ${errors.personas?.[i]?.nombre && isFieldTouched('nombre', i) ? colors.rojo : colors.grisClaro}`,
                                     color: colors.azulOscuro
                                   }}
@@ -514,19 +512,19 @@ export default function InscripcionPage() {
 
                             {/* Apellido */}
                             <div data-error={!!errors.personas?.[i]?.apellido}>
-                              <FormField 
-                                label="Apellidos *" 
-                                error={getFieldError('apellido', i)} 
+                              <FormField
+                                label="Apellidos *"
+                                error={getFieldError('apellido', i)}
                                 touched={isFieldTouched('apellido', i)}
                               >
-                                <input 
-                                  {...register(`personas.${i}.apellido`, { 
+                                <input
+                                  {...register(`personas.${i}.apellido`, {
                                     required: "El apellido es obligatorio",
                                     minLength: { value: 2, message: "Mínimo 2 caracteres" }
                                   })}
                                   onBlur={() => markAsTouched(`personas.${i}.apellido`)}
                                   className="w-full rounded-lg p-2.5 focus:outline-none focus:ring-2 transition-all"
-                                  style={{ 
+                                  style={{
                                     border: `1px solid ${errors.personas?.[i]?.apellido && isFieldTouched('apellido', i) ? colors.rojo : colors.grisClaro}`,
                                     color: colors.azulOscuro
                                   }}
@@ -537,13 +535,13 @@ export default function InscripcionPage() {
 
                             {/* Documento */}
                             <div data-error={!!errors.personas?.[i]?.documento}>
-                              <FormField 
-                                label="Documento de identidad *" 
-                                error={getFieldError('documento', i)} 
+                              <FormField
+                                label="Documento de identidad *"
+                                error={getFieldError('documento', i)}
                                 touched={isFieldTouched('documento', i)}
                               >
-                                <input 
-                                  {...register(`personas.${i}.documento`, { 
+                                <input
+                                  {...register(`personas.${i}.documento`, {
                                     required: "El documento es obligatorio",
                                     minLength: { value: 5, message: "Mínimo 5 dígitos" },
                                     maxLength: { value: 15, message: "Máximo 15 dígitos" },
@@ -551,7 +549,7 @@ export default function InscripcionPage() {
                                   })}
                                   onBlur={() => markAsTouched(`personas.${i}.documento`)}
                                   className="w-full rounded-lg p-2.5 focus:outline-none focus:ring-2 transition-all"
-                                  style={{ 
+                                  style={{
                                     border: `1px solid ${errors.personas?.[i]?.documento && isFieldTouched('documento', i) ? colors.rojo : colors.grisClaro}`,
                                     color: colors.azulOscuro
                                   }}
@@ -562,23 +560,23 @@ export default function InscripcionPage() {
 
                             {/* Email */}
                             <div data-error={!!errors.personas?.[i]?.email}>
-                              <FormField 
-                                label="Correo electrónico *" 
-                                error={getFieldError('email', i)} 
+                              <FormField
+                                label="Correo electrónico *"
+                                error={getFieldError('email', i)}
                                 touched={isFieldTouched('email', i)}
                               >
-                                <input 
-                                  {...register(`personas.${i}.email`, { 
+                                <input
+                                  {...register(`personas.${i}.email`, {
                                     required: "El email es obligatorio",
-                                    pattern: { 
-                                      value: /^\S+@\S+$/i, 
-                                      message: "Formato de email inválido" 
+                                    pattern: {
+                                      value: /^\S+@\S+$/i,
+                                      message: "Formato de email inválido"
                                     }
                                   })}
                                   onBlur={() => markAsTouched(`personas.${i}.email`)}
                                   type="email"
                                   className="w-full rounded-lg p-2.5 focus:outline-none focus:ring-2 transition-all"
-                                  style={{ 
+                                  style={{
                                     border: `1px solid ${errors.personas?.[i]?.email && isFieldTouched('email', i) ? colors.rojo : colors.grisClaro}`,
                                     color: colors.azulOscuro
                                   }}
@@ -589,13 +587,13 @@ export default function InscripcionPage() {
 
                             {/* Teléfono */}
                             <div data-error={!!errors.personas?.[i]?.telefono}>
-                              <FormField 
-                                label="Teléfono *" 
-                                error={getFieldError('telefono', i)} 
+                              <FormField
+                                label="Teléfono *"
+                                error={getFieldError('telefono', i)}
                                 touched={isFieldTouched('telefono', i)}
                               >
-                                <input 
-                                  {...register(`personas.${i}.telefono`, { 
+                                <input
+                                  {...register(`personas.${i}.telefono`, {
                                     required: "El teléfono es obligatorio",
                                     minLength: { value: 10, message: "Mínimo 10 dígitos" },
                                     maxLength: { value: 10, message: "Máximo 10 dígitos" },
@@ -604,7 +602,7 @@ export default function InscripcionPage() {
                                   onBlur={() => markAsTouched(`personas.${i}.telefono`)}
                                   type="tel"
                                   className="w-full rounded-lg p-2.5 focus:outline-none focus:ring-2 transition-all"
-                                  style={{ 
+                                  style={{
                                     border: `1px solid ${errors.personas?.[i]?.telefono && isFieldTouched('telefono', i) ? colors.rojo : colors.grisClaro}`,
                                     color: colors.azulOscuro
                                   }}
@@ -615,16 +613,16 @@ export default function InscripcionPage() {
 
                             {/* EPS */}
                             <div data-error={!!errors.personas?.[i]?.entidadSalud}>
-                              <FormField 
-                                label="EPS *" 
-                                error={getFieldError('entidadSalud', i)} 
+                              <FormField
+                                label="EPS *"
+                                error={getFieldError('entidadSalud', i)}
                                 touched={isFieldTouched('entidadSalud', i)}
                               >
-                                <select 
+                                <select
                                   {...register(`personas.${i}.entidadSalud`, { required: "Debe seleccionar una EPS" })}
                                   onBlur={() => markAsTouched(`personas.${i}.entidadSalud`)}
                                   className="w-full rounded-lg p-2.5 focus:outline-none focus:ring-2 transition-all"
-                                  style={{ 
+                                  style={{
                                     border: `1px solid ${errors.personas?.[i]?.entidadSalud && isFieldTouched('entidadSalud', i) ? colors.rojo : colors.grisClaro}`,
                                     color: colors.azulOscuro
                                   }}
@@ -639,16 +637,16 @@ export default function InscripcionPage() {
 
                             {/* Tipo */}
                             <div data-error={!!errors.personas?.[i]?.segmentacion}>
-                              <FormField 
-                                label="Tipo de participante *" 
-                                error={getFieldError('segmentacion', i)} 
+                              <FormField
+                                label="Tipo de participante *"
+                                error={getFieldError('segmentacion', i)}
                                 touched={isFieldTouched('segmentacion', i)}
                               >
-                                <select 
+                                <select
                                   {...register(`personas.${i}.segmentacion`, { required: "Debe seleccionar un tipo" })}
                                   onBlur={() => markAsTouched(`personas.${i}.segmentacion`)}
                                   className="w-full rounded-lg p-2.5 focus:outline-none focus:ring-2 transition-all"
-                                  style={{ 
+                                  style={{
                                     border: `1px solid ${errors.personas?.[i]?.segmentacion && isFieldTouched('segmentacion', i) ? colors.rojo : colors.grisClaro}`,
                                     color: colors.azulOscuro
                                   }}
@@ -664,26 +662,26 @@ export default function InscripcionPage() {
                             {/* Hospedaje y Transporte */}
                             <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
                               <div data-error={!!errors.personas?.[i]?.hospedaje}>
-                                <FormField 
-                                  label="Requiere hospedaje *" 
-                                  error={getFieldError('hospedaje', i)} 
+                                <FormField
+                                  label="Requiere hospedaje *"
+                                  error={getFieldError('hospedaje', i)}
                                   touched={isFieldTouched('hospedaje', i)}
                                 >
                                   <div className="flex gap-2">
                                     {['si', 'no'].map(opt => (
-                                      <label 
-                                        key={opt} 
+                                      <label
+                                        key={opt}
                                         className="flex-1 rounded-lg p-2.5 text-center cursor-pointer transition-all border-2"
                                         style={{
                                           borderColor: watchFields.personas?.[i]?.hospedaje === opt ? colors.verde : errors.personas?.[i]?.hospedaje && isFieldTouched('hospedaje', i) ? colors.rojo : colors.grisClaro,
                                           backgroundColor: watchFields.personas?.[i]?.hospedaje === opt ? `${colors.verde}10` : 'transparent'
                                         }}
                                       >
-                                        <input 
-                                          type="radio" 
-                                          value={opt} 
-                                          {...register(`personas.${i}.hospedaje`, { required: "Seleccione una opción" })} 
-                                          className="sr-only" 
+                                        <input
+                                          type="radio"
+                                          value={opt}
+                                          {...register(`personas.${i}.hospedaje`, { required: "Seleccione una opción" })}
+                                          className="sr-only"
                                           onBlur={() => markAsTouched(`personas.${i}.hospedaje`)}
                                         />
                                         <span className="capitalize font-medium" style={{ color: watchFields.personas?.[i]?.hospedaje === opt ? colors.verde : colors.azulOscuro }}>
@@ -696,26 +694,26 @@ export default function InscripcionPage() {
                               </div>
 
                               <div data-error={!!errors.personas?.[i]?.mediodetransporte}>
-                                <FormField 
-                                  label="Medio de transporte *" 
-                                  error={getFieldError('mediodetransporte', i)} 
+                                <FormField
+                                  label="Medio de transporte *"
+                                  error={getFieldError('mediodetransporte', i)}
                                   touched={isFieldTouched('mediodetransporte', i)}
                                 >
                                   <div className="flex gap-2">
                                     {['Avión', 'Autobús'].map(opt => (
-                                      <label 
-                                        key={opt} 
+                                      <label
+                                        key={opt}
                                         className="flex-1 rounded-lg p-2.5 text-center cursor-pointer transition-all border-2"
                                         style={{
                                           borderColor: watchFields.personas?.[i]?.mediodetransporte === opt ? colors.azul : errors.personas?.[i]?.mediodetransporte && isFieldTouched('mediodetransporte', i) ? colors.rojo : colors.grisClaro,
                                           backgroundColor: watchFields.personas?.[i]?.mediodetransporte === opt ? `${colors.azul}10` : 'transparent'
                                         }}
                                       >
-                                        <input 
-                                          type="radio" 
-                                          value={opt} 
-                                          {...register(`personas.${i}.mediodetransporte`, { required: "Seleccione transporte" })} 
-                                          className="sr-only" 
+                                        <input
+                                          type="radio"
+                                          value={opt}
+                                          {...register(`personas.${i}.mediodetransporte`, { required: "Seleccione transporte" })}
+                                          className="sr-only"
                                           onBlur={() => markAsTouched(`personas.${i}.mediodetransporte`)}
                                         />
                                         <span className="font-medium" style={{ color: watchFields.personas?.[i]?.mediodetransporte === opt ? colors.azul : colors.azulOscuro }}>
@@ -733,7 +731,7 @@ export default function InscripcionPage() {
                     </div>
 
                     {Object.keys(errors).length > 0 && (
-                      <motion.div 
+                      <motion.div
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: 'auto' }}
                         className="rounded-lg p-4 flex gap-3 items-center"
@@ -756,15 +754,15 @@ export default function InscripcionPage() {
                     </button>
                   </motion.div>
                 ) : (
-                  <motion.form 
-                    key="step2" 
-                    initial={{ opacity: 0 }} 
-                    animate={{ opacity: 1 }} 
-                    exit={{ opacity: 0 }} 
+                  <motion.form
+                    key="step2"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
                     onSubmit={handleSubmit(onSubmit)}
                     className="space-y-6"
                   >
-                    
+
                     {/* Resumen de pago */}
                     <div className="rounded-xl p-6" style={{ background: `linear-gradient(135deg, ${colors.azul} 0%, ${colors.verde} 100%)` }}>
                       <div className="space-y-3 text-white">
@@ -825,24 +823,34 @@ export default function InscripcionPage() {
 
                     {/* Subida de comprobante único */}
                     <div data-error={!!errors.comprobante}>
-                      <FormField 
-                        label="Comprobante de pago *" 
-                        error={errors.comprobante?.message} 
+                      <FormField
+                        label="Comprobante de pago *"
+                        error={errors.comprobante?.message}
                         touched={isFieldTouched('comprobante')}
                       >
                         <div className="relative">
-                          <input 
+                          <input
                             type="file"
-                            accept="image/jpeg,image/png,image/jpg,application"
-                            {...register("comprobante", { 
-                              required: "Debe subir el comprobante de pago"
+                            accept="image/jpeg,image/png,image/jpg"
+                            {...register("comprobante", {
+                              required: "Debe subir el comprobante de pago",
+                              validate: {
+                                existe: (files) => (files && files.length > 0) || "Debe seleccionar un archivo",
+                                tamaño: (files) => !files || files[0]?.size <= 5 * 1024 * 1024 || "El archivo no debe superar 5MB",
+                                tipo: (files) => {
+                                  if (!files || files.length === 0) return true;
+                                  const tipo = files[0].type;
+                                  return ['image/jpeg', 'image/png', 'image/jpg'].includes(tipo) || "Solo se permiten imágenes JPG o PNG";
+                                }
+                              },
+                              onChange: (e) => {
+                                // Esta es la forma correcta de manejar onChange con register
+                                markAsTouched('comprobante');
+                                // No llamamos trigger aquí porque mode: "onChange" ya lo hace
+                              }
                             })}
-                            onChange={(e) => {
-                              markAsTouched('comprobante');
-                              trigger('comprobante');
-                            }}
-                            className="w-full rounded-lg p-3 focus:outline-none focus:ring-2 transition-all file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold"
-                            style={{ 
+                            className="w-full rounded-lg p-3 focus:outline-none focus:ring-2 transition-all file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#1E5CAA] file:text-white hover:file:bg-[#1E2D69]"
+                            style={{
                               border: `1px solid ${errors.comprobante && isFieldTouched('comprobante') ? colors.rojo : colors.grisClaro}`,
                               color: colors.azulOscuro
                             }}
@@ -850,6 +858,17 @@ export default function InscripcionPage() {
                           <Upload className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none" size={20} style={{ color: colors.azul, opacity: 0.5 }} />
                         </div>
                       </FormField>
+
+                      {/* Preview del archivo seleccionado */}
+                      {watchFields.comprobante && watchFields.comprobante[0] && (
+                        <div className="mt-2 p-3 rounded-lg flex items-center gap-2 text-sm" style={{ backgroundColor: `${colors.verde}15`, border: `1px solid ${colors.verde}40` }}>
+                          <CheckCircle size={16} style={{ color: colors.verde }} />
+                          <span style={{ color: colors.azulOscuro }}>
+                            Archivo seleccionado: <b>{watchFields.comprobante[0].name}</b> ({(watchFields.comprobante[0].size / 1024 / 1024).toFixed(2)} MB)
+                          </span>
+                        </div>
+                      )}
+
                       <p className="text-xs mt-1" style={{ color: colors.azulOscuro, opacity: 0.5 }}>
                         Un solo comprobante para todos los participantes. JPG ó PNG - Máx. 5MB
                       </p>
@@ -857,7 +876,7 @@ export default function InscripcionPage() {
 
                     {/* Error de envío */}
                     {submitError && (
-                      <motion.div 
+                      <motion.div
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
                         className="rounded-lg p-4 flex gap-3 items-center"
@@ -881,8 +900,8 @@ export default function InscripcionPage() {
                         onClick={() => setStep(1)}
                         disabled={processing}
                         className="flex-1 px-4 py-3 rounded-lg font-medium transition-colors"
-                        style={{ 
-                          border: `1px solid ${colors.grisClaro}`, 
+                        style={{
+                          border: `1px solid ${colors.grisClaro}`,
                           color: colors.azulOscuro,
                           backgroundColor: 'white'
                         }}
