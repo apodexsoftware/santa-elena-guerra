@@ -196,10 +196,11 @@ export default function ValidarComprobantes() {
           representante: {
             nombre: `${primerInsc.nombre} ${primerInsc.apellido}`,
             email: primerInsc.email,
-            telefono: primerInsc.telefono || 'No registrado'
+            telefono: primerInsc.telefono || 'No registrado',
           },
           mediosTransporte: [...new Set(grupo.map(i => i.mediodetransporte).filter(Boolean))],
           segmentaciones: [...new Set(grupo.map(i => i.segmentacion).filter(Boolean))]
+          
         });
       });
     });
@@ -814,13 +815,14 @@ const exportarExcel = () => {
             'Documento': insc.documento,
             'Participante': `    ${insc.nombre} ${insc.apellido}`, // Indentación
             'Segmentación': insc.segmentacion || 'Sin perfil',
-            'Transporte': insc.mediodetransporte || 'No especificado',
+            'Transporte': insc.Metodotransportepropio || 'No especificado',
             'Valor': insc.precio_pactado || 0,
             'Total': '',
             'Cantidad': '',
             'Estado': '',
             'Comprobante': '',
             'Fecha': '',
+            'Edad':insc.edad,
             'Email': insc.email,
             'Teléfono': insc.telefono || 'No registrado',
             'Estado Individual': insc.estado,
@@ -1747,138 +1749,146 @@ const exportarExcel = () => {
               </div>
 
               {/* Lista de inscritos con acciones individuales */}
-              <div>
-                <h4 className="font-bold mb-3 flex items-center gap-2" style={{ color: colors.azulOscuro }}>
-                  <Users size={18} style={{ color: colors.azul }} />
-                  Inscritos en esta transacción ({selectedTransaccion.inscripciones.length})
-                </h4>
-                <div className="border rounded-xl overflow-hidden" style={{ borderColor: colors.grisClaro }}>
-                  <table className="w-full text-sm">
-                    <thead style={{ backgroundColor: colors.grisClaro }}>
-                      <tr>
-                        <th className="px-4 py-3 text-left text-xs font-bold uppercase" style={{ color: colors.azulOscuro }}>Inscrito</th>
-                        <th className="px-4 py-3 text-left text-xs font-bold uppercase" style={{ color: colors.azulOscuro }}>Documento</th>
-                        <th className="px-4 py-3 text-left text-xs font-bold uppercase" style={{ color: colors.azulOscuro }}>Segmentación</th>
-                        <th className="px-4 py-3 text-left text-xs font-bold uppercase" style={{ color: colors.azulOscuro }}>Transporte</th>
-                        <th className="px-4 py-3 text-right text-xs font-bold uppercase" style={{ color: colors.azulOscuro }}>Valor</th>
-                        <th className="px-4 py-3 text-center text-xs font-bold uppercase" style={{ color: colors.azulOscuro }}>Estado</th>
-                        <th className="px-4 py-3 text-center text-xs font-bold uppercase" style={{ color: colors.azulOscuro }}>Acciones</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y" style={{ borderColor: colors.grisClaro }}>
-                      {selectedTransaccion.inscripciones.map((insc: any) => (
-                        <tr key={insc.id} className="hover:bg-gray-50">
-                          <td className="px-4 py-3">
-                            <div className="flex items-center gap-2">
-                              <div 
-                                className="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold text-white"
-                                style={{ background: `linear-gradient(135deg, ${colors.azul} 0%, ${colors.verde} 100%)` }}
-                              >
-                                {insc.nombre[0]}{insc.apellido[0]}
-                              </div>
-                              <div>
-                                <p className="font-medium" style={{ color: colors.azulOscuro }}>
-                                  {insc.nombre} {insc.apellido}
-                                </p>
-                                <p className="text-xs flex items-center gap-1" style={{ color: colors.azulOscuro, opacity: 0.6 }}>
-                                  <Mail size={10} /> {insc.email}
-                                </p>
-                              </div>
-                            </div>
-                          </td>
-                          <td className="px-4 py-3" style={{ color: colors.azulOscuro, opacity: 0.8 }}>
-                            {insc.documento}
-                          </td>
-                          <td className="px-4 py-3" style={{ color: colors.azulOscuro, opacity: 0.8 }}>
-                            {insc.segmentacion || 'Sin perfil'}
-                          </td>
-                          <td className="px-4 py-3">
-                            <span 
-                              className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs"
-                              style={{ 
-                                backgroundColor: insc.mediodetransporte === 'Avión' ? `${colors.azul}15` : 
-                                                insc.mediodetransporte === 'Autobús' ? `${colors.verde}15` : colors.grisClaro,
-                                color: insc.mediodetransporte === 'Avión' ? colors.azul : 
-                                       insc.mediodetransporte === 'Autobús' ? colors.verde : colors.azulOscuro
-                              }}
-                            >
-                              {insc.mediodetransporte === 'Avión' ? <Plane size={10} /> : 
-                               insc.mediodetransporte === 'Autobús' ? <Bus size={10} /> : <AlertCircle size={10} />}
-                              {insc.mediodetransporte || 'No especificado'}
-                            </span>
-                          </td>
-                          <td className="px-4 py-3 text-right font-bold" style={{ color: colors.azulOscuro }}>
-                            ${(insc.precio_pactado || 0).toLocaleString()}
-                          </td>
-                          <td className="px-4 py-3 text-center">
-                            <span 
-                              className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-bold"
-                              style={{
-                                backgroundColor: insc.estado === 'aprobada' ? `${colors.verde}20` : 
-                                                insc.estado === 'pendiente' ? `${colors.amarillo}20` : `${colors.rojo}20`,
-                                color: insc.estado === 'aprobada' ? colors.verde : 
-                                       insc.estado === 'pendiente' ? colors.azulOscuro : colors.rojo
-                              }}
-                            >
-                              {insc.estado === 'aprobada' ? <CheckCircle size={10} /> : 
-                               insc.estado === 'pendiente' ? <Clock size={10} /> : <Ban size={10} />}
-                              {insc.estado === 'aprobada' ? 'Aprobado' : 
-                               insc.estado === 'pendiente' ? 'Pendiente' : 'Rechazado'}
-                            </span>
-                          </td>
-                          <td className="px-4 py-3">
-                            {isUpdatingIndividual === insc.id ? (
-                              <div className="flex justify-center">
-                                <Loader2 className="animate-spin" size={16} style={{ color: colors.azul }} />
-                              </div>
-                            ) : (
-                              <div className="flex items-center justify-center gap-1">
-                                {insc.estado !== 'aprobada' && selectedTransaccion.tieneComprobante && (
-                                  <button
-                                    onClick={() => handleValidarIndividual(insc, selectedTransaccion)}
-                                    className="p-1.5 rounded-lg transition-colors hover:bg-green-50"
-                                    style={{ color: colors.verde }}
-                                    title="Validar individual"
-                                  >
-                                    <UserCheck2 size={16} />
-                                  </button>
-                                )}
-                                {insc.estado !== 'rechazada' && (
-                                  <button
-                                    onClick={() => handleRechazarIndividual(insc, selectedTransaccion)}
-                                    className="p-1.5 rounded-lg transition-colors hover:bg-red-50"
-                                    style={{ color: colors.rojo }}
-                                    title="Rechazar individual"
-                                  >
-                                    <UserX size={16} />
-                                  </button>
-                                )}
-                                <button
-                                  onClick={() => setSelectedInscripcionIndividual(selectedInscripcionIndividual?.id === insc.id ? null : insc)}
-                                  className="p-1.5 rounded-lg transition-colors hover:bg-gray-100"
-                                  style={{ color: colors.azulOscuro, opacity: 0.6 }}
-                                  title="Ver detalle"
-                                >
-                                  <Eye size={16} />
-                                </button>
-                              </div>
-                            )}
-                          </td>
-                        </tr>
-                      ))}
-                      <tr style={{ backgroundColor: `${colors.verde}10` }}>
-                        <td colSpan={4} className="px-4 py-3 font-bold text-right" style={{ color: colors.azulOscuro }}>
-                          TOTAL DE LA TRANSACCIÓN:
-                        </td>
-                        <td className="px-4 py-3 text-right font-bold text-lg" style={{ color: colors.verde }}>
-                          ${selectedTransaccion.totalPactado.toLocaleString()}
-                        </td>
-                        <td colSpan={2}></td>
-                      </tr>
-                    </tbody>
-                  </table>
+<div>
+  <h4 className="font-bold mb-3 flex items-center gap-2" style={{ color: colors.azulOscuro }}>
+    <Users size={18} style={{ color: colors.azul }} />
+    Inscritos en esta transacción ({selectedTransaccion.inscripciones.length})
+  </h4>
+  <div className="border rounded-xl overflow-hidden" style={{ borderColor: colors.grisClaro }}>
+    <table className="w-full text-sm">
+      <thead style={{ backgroundColor: colors.grisClaro }}>
+        <tr>
+          <th className="px-4 py-3 text-left text-xs font-bold uppercase" style={{ color: colors.azulOscuro }}>Inscrito</th>
+          <th className="px-4 py-3 text-left text-xs font-bold uppercase" style={{ color: colors.azulOscuro }}>Documento</th>
+          {/* Movimos la columna Edad aquí para mejor lectura */}
+          <th className="px-4 py-3 text-center text-xs font-bold uppercase" style={{ color: colors.azulOscuro }}>Edad</th>
+          <th className="px-4 py-3 text-left text-xs font-bold uppercase" style={{ color: colors.azulOscuro }}>Segmentación</th>
+          <th className="px-4 py-3 text-left text-xs font-bold uppercase" style={{ color: colors.azulOscuro }}>Transporte</th>
+          <th className="px-4 py-3 text-right text-xs font-bold uppercase" style={{ color: colors.azulOscuro }}>Valor</th>
+          <th className="px-4 py-3 text-center text-xs font-bold uppercase" style={{ color: colors.azulOscuro }}>Estado</th>
+          <th className="px-4 py-3 text-center text-xs font-bold uppercase" style={{ color: colors.azulOscuro }}>Acciones</th>
+        </tr>
+      </thead>
+      <tbody className="divide-y" style={{ borderColor: colors.grisClaro }}>
+        {selectedTransaccion.inscripciones.map((insc: any) => (
+          <tr key={insc.id} className="hover:bg-gray-50">
+            <td className="px-4 py-3">
+              <div className="flex items-center gap-2">
+                <div 
+                  className="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold text-white"
+                  style={{ background: `linear-gradient(135deg, ${colors.azul} 0%, ${colors.verde} 100%)` }}
+                >
+                  {insc.nombre[0]}{insc.apellido[0]}
+                </div>
+                <div>
+                  <p className="font-medium" style={{ color: colors.azulOscuro }}>
+                    {insc.nombre} {insc.apellido}
+                  </p>
+                  <p className="text-xs flex items-center gap-1" style={{ color: colors.azulOscuro, opacity: 0.6 }}>
+                    <Mail size={10} /> {insc.email}
+                  </p>
                 </div>
               </div>
+            </td>
+            <td className="px-4 py-3" style={{ color: colors.azulOscuro, opacity: 0.8 }}>
+              {insc.documento}
+            </td>
+            {/* Agregamos el td faltante para la Edad */}
+            <td className="px-4 py-3 text-center" style={{ color: colors.azulOscuro, opacity: 0.8 }}>
+              {insc.edad || '-'}
+            </td>
+            <td className="px-4 py-3" style={{ color: colors.azulOscuro, opacity: 0.8 }}>
+              {insc.segmentacion || 'Sin perfil'}
+            </td>
+            <td className="px-4 py-3">
+              <span 
+                className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs"
+                style={{ 
+                  backgroundColor: insc.mediodetransporte === 'Avión' ? `${colors.azul}15` : 
+                                   insc.mediodetransporte === 'Autobús' ? `${colors.verde}15` : colors.grisClaro,
+                  color: insc.mediodetransporte === 'Avión' ? colors.azul : 
+                         insc.mediodetransporte === 'Autobús' ? colors.verde : colors.azulOscuro
+                }}
+              >
+                {insc.mediodetransporte === 'Avión' ? <Plane size={10} /> : 
+                 insc.mediodetransporte === 'Autobús' ? <Bus size={10} /> : <AlertCircle size={10} />}
+                {insc.mediodetransporte || 'No especificado'}
+              </span>
+            </td>
+            <td className="px-4 py-3 text-right font-bold" style={{ color: colors.azulOscuro }}>
+              ${(insc.precio_pactado || 0).toLocaleString()}
+            </td>
+            <td className="px-4 py-3 text-center">
+              <span 
+                className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-bold"
+                style={{
+                  backgroundColor: insc.estado === 'aprobada' ? `${colors.verde}20` : 
+                                   insc.estado === 'pendiente' ? `${colors.amarillo}20` : `${colors.rojo}20`,
+                  color: insc.estado === 'aprobada' ? colors.verde : 
+                         insc.estado === 'pendiente' ? colors.azulOscuro : colors.rojo
+                }}
+              >
+                {insc.estado === 'aprobada' ? <CheckCircle size={10} /> : 
+                 insc.estado === 'pendiente' ? <Clock size={10} /> : <Ban size={10} />}
+                {insc.estado === 'aprobada' ? 'Aprobado' : 
+                 insc.estado === 'pendiente' ? 'Pendiente' : 'Rechazado'}
+              </span>
+            </td>
+            <td className="px-4 py-3">
+              {isUpdatingIndividual === insc.id ? (
+                <div className="flex justify-center">
+                  <Loader2 className="animate-spin" size={16} style={{ color: colors.azul }} />
+                </div>
+              ) : (
+                <div className="flex items-center justify-center gap-1">
+                  {insc.estado !== 'aprobada' && selectedTransaccion.tieneComprobante && (
+                    <button
+                      onClick={() => handleValidarIndividual(insc, selectedTransaccion)}
+                      className="p-1.5 rounded-lg transition-colors hover:bg-green-50"
+                      style={{ color: colors.verde }}
+                      title="Validar individual"
+                    >
+                      <UserCheck2 size={16} />
+                    </button>
+                  )}
+                  {insc.estado !== 'rechazada' && (
+                    <button
+                      onClick={() => handleRechazarIndividual(insc, selectedTransaccion)}
+                      className="p-1.5 rounded-lg transition-colors hover:bg-red-50"
+                      style={{ color: colors.rojo }}
+                      title="Rechazar individual"
+                    >
+                      <UserX size={16} />
+                    </button>
+                  )}
+                  <button
+                    onClick={() => setSelectedInscripcionIndividual(selectedInscripcionIndividual?.id === insc.id ? null : insc)}
+                    className="p-1.5 rounded-lg transition-colors hover:bg-gray-100"
+                    style={{ color: colors.azulOscuro, opacity: 0.6 }}
+                    title="Ver detalle"
+                  >
+                    <Eye size={16} />
+                  </button>
+                </div>
+              )}
+            </td>
+          </tr>
+        ))}
+        <tr style={{ backgroundColor: `${colors.verde}10` }}>
+          {/* Se ajustó el colSpan de 4 a 5 para cubrir el espacio extra que generó la columna "Edad" */}
+          <td colSpan={5} className="px-4 py-3 font-bold text-right" style={{ color: colors.azulOscuro }}>
+            TOTAL DE LA TRANSACCIÓN:
+          </td>
+          <td className="px-4 py-3 text-right font-bold text-lg" style={{ color: colors.verde }}>
+            ${(selectedTransaccion.totalPactado || 0).toLocaleString()}
+          </td>
+          {/* El colSpan restante se mantiene en 2 para sumar exactamente 8 columnas en total */}
+          <td colSpan={2}></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
 
               {/* Acciones finales */}
               <div 
@@ -2005,6 +2015,11 @@ const exportarExcel = () => {
                 <div>
                   <p className="text-xs font-bold uppercase mb-1" style={{ color: colors.azulOscuro, opacity: 0.6 }}>Requiere hospedaje</p>
                   <p className="font-medium" style={{ color: colors.azulOscuro }}>{selectedInscripcionIndividual.hospedaje}</p>
+                </div>
+
+                  <div>
+                  <p className="text-xs font-bold uppercase mb-1" style={{ color: colors.azulOscuro, opacity: 0.6 }}>Edad</p>
+                  <p className="font-medium" style={{ color: colors.azulOscuro }}>{selectedInscripcionIndividual.edad}</p>
                 </div>
               </div>
 

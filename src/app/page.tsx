@@ -387,7 +387,7 @@ export default function InscripcionPage() {
             </div>
             <div>
               <h1 className="text-2xl font-bold" style={{ color: colors.azulOscuro }}>{evento.nombre}</h1>
-              <p className="mt-1" style={{ color: colors.azulOscuro, opacity: 0.7 }}>{evento.descripcion || "Inscripción por diócesis"}</p>
+              <p className="mt-1" style={{ color: colors.azulOscuro, opacity: 0.7 }}>{evento.descripcion || "Querido hermano, nos alegra mucho que estés aquí.\nTe damos la bienvenida a este espacio de inscripción para nuestro ENCAR, que se realizará en Rionegro – Antioquia, los días 27, 28 y 29 de junio.\nTe invitamos a completar este formulario con calma. Cada paso te acerca a vivir una experiencia que busca encender tu corazón por medio de la grandiosa efusión del Espíritu Santo."}</p>
               <div className="flex items-center gap-4 mt-3 text-sm" style={{ color: colors.azulOscuro, opacity: 0.6 }}>
                 <span className="flex items-center gap-1"><Users size={16} />{stats.inscritos} / {stats.cupos} cupos</span>
                 <span className="flex items-center gap-1"><Shield size={16} />Pago por comprobante</span>
