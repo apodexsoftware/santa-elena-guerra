@@ -23,8 +23,9 @@ type PersonaFormData = {
   entidadSalud: string;
   segmentacion: string;
   hospedaje: "si" | "no";
-  mediodetransporte: "Avión" | "Autobús";
+  mediodetransporte: "Sí" | "No";
   telefono: string;
+  edad: number;
 };
 
 type FormData = {
@@ -118,7 +119,7 @@ export default function InscripcionPage() {
       personas: [{
         nombre: "", apellido: "", documento: "", email: "",
         entidadSalud: "", segmentacion: "", hospedaje: "no",
-        mediodetransporte: "Autobús", telefono: "",
+        mediodetransporte: "Sí", telefono: "", edad:0,
       }],
       comprobante: undefined
     }
@@ -238,7 +239,7 @@ export default function InscripcionPage() {
   const nextStep = async () => {
     const newTouched: Record<string, boolean> = { diocesis: true };
     fields.forEach((_, i) => {
-      ['nombre', 'apellido', 'documento', 'email', 'telefono', 'entidadSalud', 'segmentacion', 'hospedaje', 'mediodetransporte'].forEach(field => {
+      ['nombre', 'apellido', 'documento', 'email', 'telefono', 'entidadSalud', 'segmentacion', 'hospedaje', 'mediodetransporte', 'edad'].forEach(field => {
         newTouched[`personas.${i}.${field}`] = true;
       });
     });
@@ -300,6 +301,8 @@ export default function InscripcionPage() {
         precio_pactado: resumen.total / data.personas.length,
         estado: 'pendiente',
         imagen_url: comprobanteUrl,
+        Metodotransportepropio: persona.mediodetransporte,
+        edad: persona.edad,
         created_at: new Date().toISOString()
       }));
 
@@ -461,7 +464,7 @@ export default function InscripcionPage() {
                             append({
                               nombre: "", apellido: "", documento: "", email: "",
                               entidadSalud: "", segmentacion: "", hospedaje: "no",
-                              mediodetransporte: "Autobús", telefono: "",
+                              mediodetransporte: "Sí", telefono: "",edad:0
                             });
                           }}
                           className="text-sm font-medium flex items-center gap-1 transition-colors hover:opacity-80"
@@ -658,7 +661,30 @@ export default function InscripcionPage() {
                                 </select>
                               </FormField>
                             </div>
-
+                            <div data-error={!!errors.personas?.[i]?.telefono}>
+                              <FormField
+                                label="Edad *"
+                                error={getFieldError('edad', i)}
+                                touched={isFieldTouched('edad', i)}
+                              >
+                                <input
+                                  {...register(`personas.${i}.edad`, {
+                                    required: "La edad es obligatoria",
+                                    minLength: { value: 1, message: "Mínimo 10 dígitos" },
+                                    maxLength: { value: 120, message: "Máximo 10 dígitos" },
+                                    pattern: { value: /^[0-9]+$/, message: "Solo números permitidos" }
+                                  })}
+                                  onBlur={() => markAsTouched(`personas.${i}.edad`)}
+                                  type="tel"
+                                  className="w-full rounded-lg p-2.5 focus:outline-none focus:ring-2 transition-all"
+                                  style={{
+                                    border: `1px solid ${errors.personas?.[i]?.edad && isFieldTouched('edad', i) ? colors.rojo : colors.grisClaro}`,
+                                    color: colors.azulOscuro
+                                  }}
+                                  placeholder="3001234567"
+                                />
+                              </FormField>
+                            </div>
                             {/* Hospedaje y Transporte */}
                             <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
                               <div data-error={!!errors.personas?.[i]?.hospedaje}>
@@ -700,7 +726,7 @@ export default function InscripcionPage() {
                                   touched={isFieldTouched('mediodetransporte', i)}
                                 >
                                   <div className="flex gap-2">
-                                    {['Avión', 'Autobús'].map(opt => (
+                                    {['Sí', 'No'].map(opt => (
                                       <label
                                         key={opt}
                                         className="flex-1 rounded-lg p-2.5 text-center cursor-pointer transition-all border-2"
