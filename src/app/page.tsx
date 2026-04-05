@@ -23,7 +23,7 @@ type PersonaFormData = {
   entidadSalud: string;
   segmentacion: string;
   hospedaje: "si" | "no";
-  mediodetransporte: "Sí" | "No";
+  usaraBusDuranteEncar: "si" | "no";
   telefono: string;
   edad: number;
 };
@@ -119,7 +119,7 @@ export default function InscripcionPage() {
       personas: [{
         nombre: "", apellido: "", documento: "", email: "",
         entidadSalud: "", segmentacion: "", hospedaje: "no",
-        mediodetransporte: "Sí", telefono: "", edad:0,
+        usaraBusDuranteEncar: "no", telefono: "",
       }],
       comprobante: undefined
     }
@@ -239,7 +239,7 @@ export default function InscripcionPage() {
   const nextStep = async () => {
     const newTouched: Record<string, boolean> = { diocesis: true };
     fields.forEach((_, i) => {
-      ['nombre', 'apellido', 'documento', 'email', 'telefono', 'entidadSalud', 'segmentacion', 'hospedaje', 'mediodetransporte', 'edad'].forEach(field => {
+      ['nombre', 'apellido', 'documento', 'email', 'telefono', 'entidadSalud', 'segmentacion', 'hospedaje', 'usaraBusDuranteEncar', 'edad'].forEach(field => {
         newTouched[`personas.${i}.${field}`] = true;
       });
     });
@@ -297,11 +297,11 @@ export default function InscripcionPage() {
         entidadSalud: persona.entidadSalud,
         segmentacion: persona.segmentacion,
         hospedaje: persona.hospedaje,
-        mediodetransporte: persona.mediodetransporte,
+        usara_bus_durante_encar: persona.usaraBusDuranteEncar,
         precio_pactado: resumen.total / data.personas.length,
         estado: 'pendiente',
         imagen_url: comprobanteUrl,
-        Metodotransportepropio: persona.mediodetransporte,
+        Metodotransportepropio: persona.usaraBusDuranteEncar,
         edad: persona.edad,
         created_at: new Date().toISOString()
       }));
@@ -464,7 +464,7 @@ export default function InscripcionPage() {
                             append({
                               nombre: "", apellido: "", documento: "", email: "",
                               entidadSalud: "", segmentacion: "", hospedaje: "no",
-                              mediodetransporte: "Sí", telefono: "",edad:0
+                              usaraBusDuranteEncar: "no", telefono: "",edad:0
                             });
                           }}
                           className="text-sm font-medium flex items-center gap-1 transition-colors hover:opacity-80"
@@ -719,31 +719,31 @@ export default function InscripcionPage() {
                                 </FormField>
                               </div>
 
-                              <div data-error={!!errors.personas?.[i]?.mediodetransporte}>
+                              <div data-error={!!errors.personas?.[i]?.usaraBusDuranteEncar}>
                                 <FormField
-                                  label="Medio de transporte *"
-                                  error={getFieldError('mediodetransporte', i)}
-                                  touched={isFieldTouched('mediodetransporte', i)}
+                                  label="¿Tu delegación llegará en bus y utilizará este medio de transporte durante el ENCAR? *"
+                                  error={getFieldError('usaraBusDuranteEncar', i)}
+                                  touched={isFieldTouched('usaraBusDuranteEncar', i)}
                                 >
                                   <div className="flex gap-2">
-                                    {['Sí', 'No'].map(opt => (
+                                    {['si', 'no'].map(opt => (
                                       <label
                                         key={opt}
                                         className="flex-1 rounded-lg p-2.5 text-center cursor-pointer transition-all border-2"
                                         style={{
-                                          borderColor: watchFields.personas?.[i]?.mediodetransporte === opt ? colors.azul : errors.personas?.[i]?.mediodetransporte && isFieldTouched('mediodetransporte', i) ? colors.rojo : colors.grisClaro,
-                                          backgroundColor: watchFields.personas?.[i]?.mediodetransporte === opt ? `${colors.azul}10` : 'transparent'
+                                          borderColor: watchFields.personas?.[i]?.usaraBusDuranteEncar === opt ? colors.azul : errors.personas?.[i]?.usaraBusDuranteEncar && isFieldTouched('usaraBusDuranteEncar', i) ? colors.rojo : colors.grisClaro,
+                                          backgroundColor: watchFields.personas?.[i]?.usaraBusDuranteEncar === opt ? `${colors.azul}10` : 'transparent'
                                         }}
                                       >
                                         <input
                                           type="radio"
                                           value={opt}
-                                          {...register(`personas.${i}.mediodetransporte`, { required: "Seleccione transporte" })}
+                                          {...register(`personas.${i}.usaraBusDuranteEncar`, { required: "Seleccione una opción" })}
                                           className="sr-only"
-                                          onBlur={() => markAsTouched(`personas.${i}.mediodetransporte`)}
+                                          onBlur={() => markAsTouched(`personas.${i}.usaraBusDuranteEncar`)}
                                         />
-                                        <span className="font-medium" style={{ color: watchFields.personas?.[i]?.mediodetransporte === opt ? colors.azul : colors.azulOscuro }}>
-                                          {opt}
+                                        <span className="capitalize font-medium" style={{ color: watchFields.personas?.[i]?.usaraBusDuranteEncar === opt ? colors.azul : colors.azulOscuro }}>
+                                          {opt === 'si' ? 'Sí' : 'No'}
                                         </span>
                                       </label>
                                     ))}
