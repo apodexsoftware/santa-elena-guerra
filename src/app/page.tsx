@@ -681,7 +681,7 @@ export default function InscripcionPage() {
                                     border: `1px solid ${errors.personas?.[i]?.edad && isFieldTouched('edad', i) ? colors.rojo : colors.grisClaro}`,
                                     color: colors.azulOscuro
                                   }}
-                                  placeholder="3001234567"
+                                  placeholder="10"
                                 />
                               </FormField>
                             </div>
