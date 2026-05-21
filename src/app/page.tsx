@@ -686,37 +686,6 @@ export default function InscripcionPage() {
                               </FormField>
                             </div>
                             {/* Hospedaje y Transporte */}
-                              <div data-error={!!errors.personas?.[i]?.usaraBusDuranteEncar}>
-                                <FormField
-                                  label="¿Tu delegación llegará en bus y utilizará este medio de transporte durante el ENCAR? *"
-                                  error={getFieldError('usaraBusDuranteEncar', i)}
-                                  touched={isFieldTouched('usaraBusDuranteEncar', i)}
-                                >
-                                  <div className="flex gap-2">
-                                    {['si', 'no'].map(opt => (
-                                      <label
-                                        key={opt}
-                                        className="flex-1 rounded-lg p-2.5 text-center cursor-pointer transition-all border-2"
-                                        style={{
-                                          borderColor: watchFields.personas?.[i]?.usaraBusDuranteEncar === opt ? colors.azul : errors.personas?.[i]?.usaraBusDuranteEncar && isFieldTouched('usaraBusDuranteEncar', i) ? colors.rojo : colors.grisClaro,
-                                          backgroundColor: watchFields.personas?.[i]?.usaraBusDuranteEncar === opt ? `${colors.azul}10` : 'transparent'
-                                        }}
-                                      >
-                                        <input
-                                          type="radio"
-                                          value={opt}
-                                          {...register(`personas.${i}.usaraBusDuranteEncar`, { required: "Seleccione una opción" })}
-                                          className="sr-only"
-                                          onBlur={() => markAsTouched(`personas.${i}.usaraBusDuranteEncar`)}
-                                        />
-                                        <span className="capitalize font-medium" style={{ color: watchFields.personas?.[i]?.usaraBusDuranteEncar === opt ? colors.azul : colors.azulOscuro }}>
-                                          {opt === 'si' ? 'Sí' : 'No'}
-                                        </span>
-                                      </label>
-                                    ))}
-                                  </div>
-                                </FormField>
-                              </div>
                             </div>
                           </div>
                       ))}
