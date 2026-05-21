@@ -719,7 +719,6 @@ export default function InscripcionPage() {
                               </div>
                             </div>
                           </div>
-                        </div>
                       ))}
                     </div>
 
