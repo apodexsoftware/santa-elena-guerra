@@ -105,7 +105,7 @@ export default function InscripcionPage() {
   const [step, setStep] = useState(1);
   const [evento, setEvento] = useState<any>(null);
   const [dbData, setDbData] = useState<{ tipos: any[]; eps: any[]; dio: any[]; config: any }>({ tipos: [], eps: [], dio: [], config: null });
-  const [stats, setStats] = useState({ inscritos: 0, cupos: 5000 });
+  const [stats, setStats] = useState({ inscritos: 0, cupos: 3300 });
   const [selectedDiocesis, setSelectedDiocesis] = useState<{ id: string; nombre: string } | null>(null);
   const [processing, setProcessing] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -161,7 +161,7 @@ export default function InscripcionPage() {
             .select('*', { count: 'exact', head: true })
             .eq('evento_id', eventoData.id);
 
-          setStats({ inscritos: count || 0, cupos: 5000 });
+          setStats({ inscritos: count || 0, cupos: 3300 });
 
           const [t, e, d, c] = await Promise.all([
             supabase.from('tipos_persona').select('*').eq('evento_id', eventoData.id),
