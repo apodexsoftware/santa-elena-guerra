@@ -48,7 +48,7 @@ const colors = {
 };
 
 // Límite de inscripciones
-const CUPO_LIMITE = 3000;
+const CUPO_LIMITE = 3250;
 
 // Componente de paso
 const StepIndicator = ({ step, currentStep, title }: {
