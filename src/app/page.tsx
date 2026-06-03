@@ -372,14 +372,14 @@ export default function InscripcionPage() {
           </div>
           <h2 className="text-2xl font-bold mb-2" style={{ color: colors.azulOscuro }}>Cupo Completo</h2>
           <p className="mb-4" style={{ color: colors.azulOscuro, opacity: 0.7 }}>
-            Hemos alcanzado el límite de <strong>{CUPO_LIMITE.toLocaleString()}</strong> inscripciones para este evento.
+            Hemos alcanzado el límite de <strong>3,300</strong> inscripciones para este evento.
           </p>
           <p className="text-sm mb-6" style={{ color: colors.azulOscuro, opacity: 0.5 }}>
             Gracias por tu interés. Para más información, contacta a la organización.
           </p>
           <div className="flex items-center justify-center gap-2 text-sm font-medium" style={{ color: colors.rojo }}>
             <Users size={16} />
-            <span>3,000 / {CUPO_LIMITE.toLocaleString()} cupos</span>
+            <span>3,300 / 3,300 cupos</span>
           </div>
         </motion.div>
       </div>
