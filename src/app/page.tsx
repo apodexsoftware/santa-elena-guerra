@@ -379,7 +379,7 @@ export default function InscripcionPage() {
           </p>
           <div className="flex items-center justify-center gap-2 text-sm font-medium" style={{ color: colors.rojo }}>
             <Users size={16} />
-            <span>3000 / {CUPO_LIMITE.toLocaleString()} cupos</span>
+            <span>3,000 / {CUPO_LIMITE.toLocaleString()} cupos</span>
           </div>
         </motion.div>
       </div>
