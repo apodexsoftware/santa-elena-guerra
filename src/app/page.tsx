@@ -9,7 +9,8 @@ import {
   BedDouble, Calendar,
   ChevronRight,
   X, Plus, Trash2, Users,
-  Upload, AlertTriangle, CheckCircle
+  Upload, AlertTriangle, CheckCircle,
+  Ban
 } from "lucide-react";
 import { createClient } from "@/utils/supabase/clients";
 import { motion, AnimatePresence } from "framer-motion";
@@ -45,6 +46,9 @@ const colors = {
   rojoOscuro: "#B41919",
   grisClaro: "#E6E7E8",
 };
+
+// Límite de inscripciones
+const CUPO_LIMITE = 3000;
 
 // Componente de paso
 const StepIndicator = ({ step, currentStep, title }: {
@@ -105,14 +109,14 @@ export default function InscripcionPage() {
   const [step, setStep] = useState(1);
   const [evento, setEvento] = useState<any>(null);
   const [dbData, setDbData] = useState<{ tipos: any[]; eps: any[]; dio: any[]; config: any }>({ tipos: [], eps: [], dio: [], config: null });
-  const [stats, setStats] = useState({ inscritos: 0, cupos: 3300 });
+  const [stats, setStats] = useState({ inscritos: 0, cupos: CUPO_LIMITE });
   const [selectedDiocesis, setSelectedDiocesis] = useState<{ id: string; nombre: string } | null>(null);
   const [processing, setProcessing] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitSuccess, setSubmitSuccess] = useState(false);
-  const [touchedFields, setTouchedFields] = useState<Record<string, boolean>>({});
+  const [touchedFields, setTouchedFields] = useState<<Record<string, boolean>>({});
 
-  const { register, watch, formState: { errors }, control, trigger, setValue, getValues, handleSubmit } = useForm<FormData>({
+  const { register, watch, formState: { errors }, control, trigger, setValue, getValues, handleSubmit } = useForm<<FormData>({
     mode: "onChange",
     defaultValues: {
       diocesis: "",
@@ -161,7 +165,7 @@ export default function InscripcionPage() {
             .select('*', { count: 'exact', head: true })
             .eq('evento_id', eventoData.id);
 
-          setStats({ inscritos: count || 0, cupos: 3300 });
+          setStats({ inscritos: count || 0, cupos: CUPO_LIMITE });
 
           const [t, e, d, c] = await Promise.all([
             supabase.from('tipos_persona').select('*').eq('evento_id', eventoData.id),
@@ -237,6 +241,12 @@ export default function InscripcionPage() {
   }, [watchFields, dbData, evento]);
 
   const nextStep = async () => {
+    // Bloqueo adicional por si el cupo se llenó mientras el usuario estaba en el paso 1
+    if (stats.inscritos >= CUPO_LIMITE) {
+      setSubmitError("El cupo se ha completado. No se permiten más inscripciones.");
+      return;
+    }
+
     const newTouched: Record<string, boolean> = { diocesis: true };
     fields.forEach((_, i) => {
       ['nombre', 'apellido', 'documento', 'email', 'telefono', 'entidadSalud', 'segmentacion', 'hospedaje', 'usaraBusDuranteEncar', 'edad'].forEach(field => {
@@ -260,6 +270,14 @@ export default function InscripcionPage() {
 
   const onSubmit = async (data: FormData) => {
     if (processing || !selectedDiocesis) return;
+    
+    // Validación final de seguridad antes de insertar
+    if (stats.inscritos >= CUPO_LIMITE) {
+      setSubmitError("El cupo se ha completado. No se permiten más inscripciones.");
+      setProcessing(false);
+      return;
+    }
+
     setProcessing(true);
     setSubmitError(null);
 
@@ -344,6 +362,35 @@ export default function InscripcionPage() {
     </div>
   );
 
+  // 🚫 PANTALLA DE CUPO COMPLETO
+  if (stats.inscritos >= CUPO_LIMITE) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-4" style={{ backgroundColor: colors.grisClaro }}>
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="text-center max-w-md p-8 rounded-2xl shadow-lg"
+          style={{ backgroundColor: 'white' }}
+        >
+          <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: `${colors.rojo}20` }}>
+            <Ban size={40} style={{ color: colors.rojo }} />
+          </div>
+          <h2 className="text-2xl font-bold mb-2" style={{ color: colors.azulOscuro }}>Cupo Completo</h2>
+          <p className="mb-4" style={{ color: colors.azulOscuro, opacity: 0.7 }}>
+            Hemos alcanzado el límite de <strong>{CUPO_LIMITE.toLocaleString()}</strong> inscripciones para este evento.
+          </p>
+          <p className="text-sm mb-6" style={{ color: colors.azulOscuro, opacity: 0.5 }}>
+            Gracias por tu interés. Para más información, contacta a la organización.
+          </p>
+          <div className="flex items-center justify-center gap-2 text-sm font-medium" style={{ color: colors.rojo }}>
+            <Users size={16} />
+            <span>{stats.inscritos.toLocaleString()} / {CUPO_LIMITE.toLocaleString()} cupos</span>
+          </div>
+        </motion.div>
+      </div>
+    );
+  }
+
   if (submitSuccess) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4" style={{ backgroundColor: colors.grisClaro }}>
@@ -389,7 +436,11 @@ export default function InscripcionPage() {
               <h1 className="text-2xl font-bold" style={{ color: colors.azulOscuro }}>{evento.nombre}</h1>
               <p className="mt-1" style={{ color: colors.azulOscuro, opacity: 0.7 }}>{evento.descripcion || "Estamos en la recta final y estamos muy gozosos  de poder recibirlos!! \n Te informamos que en esta última etapa de inscripciones ya NO CONTAMOS con disponibilidad de hospedaje, ¡pero la experiencia sigue siendo igual de inolvidable! \n No te quedes fuera!!  Asegura tu entrada, organiza tu estadía por tu cuenta y prepárate para vivir la experiencia ENCAR 2026 al máximo."}</p>
               <div className="flex items-center gap-4 mt-3 text-sm" style={{ color: colors.azulOscuro, opacity: 0.6 }}>
-                <span className="flex items-center gap-1"><Users size={16} />{stats.inscritos} / {stats.cupos} cupos</span>
+                <span className={`flex items-center gap-1 ${stats.inscritos >= CUPO_LIMITE ? 'text-[#ED1C24] font-bold' : ''}`}>
+                  <Users size={16} />
+                  {stats.inscritos} / {stats.cupos} cupos
+                  {stats.inscritos >= CUPO_LIMITE && <span className="ml-1 text-xs uppercase tracking-wide">(Cupo completo)</span>}
+                </span>
                 <span className="flex items-center gap-1"><Shield size={16} />Pago por comprobante</span>
               </div>
             </div>
@@ -707,11 +758,15 @@ export default function InscripcionPage() {
 
                     <button
                       onClick={nextStep}
-                      disabled={fields.length === 0 || !watchFields.diocesis}
+                      disabled={fields.length === 0 || !watchFields.diocesis || stats.inscritos >= CUPO_LIMITE}
                       className="w-full text-white py-3 rounded-lg font-medium disabled:opacity-50 flex items-center justify-center gap-2 transition-all hover:shadow-lg"
                       style={{ background: `linear-gradient(135deg, ${colors.verde} 0%, ${colors.azul} 100%)` }}
                     >
-                      Continuar <ChevronRight size={18} />
+                      {stats.inscritos >= CUPO_LIMITE ? (
+                        <>Cupo Completo <Ban size={18} /></>
+                      ) : (
+                        <>Continuar <ChevronRight size={18} /></>
+                      )}
                     </button>
                   </motion.div>
                 ) : (
@@ -871,12 +926,12 @@ export default function InscripcionPage() {
                       </button>
                       <button
                         type="submit"
-                        disabled={processing}
+                        disabled={processing || stats.inscritos >= CUPO_LIMITE}
                         className="flex-1 text-white px-4 py-3 rounded-lg font-medium disabled:opacity-50 flex items-center justify-center gap-2 transition-all hover:shadow-lg"
                         style={{ background: `linear-gradient(135deg, ${colors.verde} 0%, ${colors.azul} 100%)` }}
                       >
                         {processing ? <Loader2 className="animate-spin" size={18} /> : <Send size={18} />}
-                        {processing ? 'Enviando...' : 'Enviar inscripción'}
+                        {processing ? 'Enviando...' : stats.inscritos >= CUPO_LIMITE ? 'Cupo Completo' : 'Enviar inscripción'}
                       </button>
                     </div>
                   </motion.form>
