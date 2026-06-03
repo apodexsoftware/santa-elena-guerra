@@ -114,9 +114,9 @@ export default function InscripcionPage() {
   const [processing, setProcessing] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitSuccess, setSubmitSuccess] = useState(false);
-  const [touchedFields, setTouchedFields] = useState<<Record<string, boolean>>({});
+  const [touchedFields, setTouchedFields] = useState<Record<string, boolean>>({});
 
-  const { register, watch, formState: { errors }, control, trigger, setValue, getValues, handleSubmit } = useForm<<FormData>({
+  const { register, watch, formState: { errors }, control, trigger, setValue, getValues, handleSubmit } = useForm<FormData>({
     mode: "onChange",
     defaultValues: {
       diocesis: "",
@@ -241,7 +241,6 @@ export default function InscripcionPage() {
   }, [watchFields, dbData, evento]);
 
   const nextStep = async () => {
-    // Bloqueo adicional por si el cupo se llenó mientras el usuario estaba en el paso 1
     if (stats.inscritos >= CUPO_LIMITE) {
       setSubmitError("El cupo se ha completado. No se permiten más inscripciones.");
       return;
@@ -271,7 +270,6 @@ export default function InscripcionPage() {
   const onSubmit = async (data: FormData) => {
     if (processing || !selectedDiocesis) return;
     
-    // Validación final de seguridad antes de insertar
     if (stats.inscritos >= CUPO_LIMITE) {
       setSubmitError("El cupo se ha completado. No se permiten más inscripciones.");
       setProcessing(false);
@@ -284,7 +282,6 @@ export default function InscripcionPage() {
     try {
       let comprobanteUrl = null;
 
-      // Subir comprobante único si existe
       if (data.comprobante && data.comprobante[0]) {
         const file = data.comprobante[0];
         const fileExt = file.name.split('.').pop();
@@ -303,7 +300,6 @@ export default function InscripcionPage() {
         comprobanteUrl = urlData.publicUrl;
       }
 
-      // Crear todas las inscripciones con el mismo comprobante
       const inscripcionesData = data.personas.map(persona => ({
         evento_id: evento.id,
         diocesis_id: selectedDiocesis.id,
@@ -362,7 +358,6 @@ export default function InscripcionPage() {
     </div>
   );
 
-  // 🚫 PANTALLA DE CUPO COMPLETO
   if (stats.inscritos >= CUPO_LIMITE) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4" style={{ backgroundColor: colors.grisClaro }}>
@@ -415,7 +410,6 @@ export default function InscripcionPage() {
             >
               Aceptar
             </a>
-
           </p>
         </motion.div>
       </div>
@@ -860,9 +854,7 @@ export default function InscripcionPage() {
                                 }
                               },
                               onChange: (e) => {
-                                // Esta es la forma correcta de manejar onChange con register
                                 markAsTouched('comprobante');
-                                // No llamamos trigger aquí porque mode: "onChange" ya lo hace
                               }
                             })}
                             className="w-full rounded-lg p-3 focus:outline-none focus:ring-2 transition-all file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#1E5CAA] file:text-white hover:file:bg-[#1E2D69]"
@@ -875,7 +867,6 @@ export default function InscripcionPage() {
                         </div>
                       </FormField>
 
-                      {/* Preview del archivo seleccionado */}
                       {watchFields.comprobante && watchFields.comprobante[0] && (
                         <div className="mt-2 p-3 rounded-lg flex items-center gap-2 text-sm" style={{ backgroundColor: `${colors.verde}15`, border: `1px solid ${colors.verde}40` }}>
                           <CheckCircle size={16} style={{ color: colors.verde }} />
@@ -890,7 +881,6 @@ export default function InscripcionPage() {
                       </p>
                     </div>
 
-                    {/* Error de envío */}
                     {submitError && (
                       <motion.div
                         initial={{ opacity: 0, scale: 0.95 }}
@@ -909,7 +899,6 @@ export default function InscripcionPage() {
                       </motion.div>
                     )}
 
-                    {/* Botones */}
                     <div className="flex gap-3">
                       <button
                         type="button"
