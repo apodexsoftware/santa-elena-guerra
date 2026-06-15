@@ -165,7 +165,7 @@ export default function InscripcionPage() {
             .select('*', { count: 'exact', head: true })
             .eq('evento_id', eventoData.id);
 
-          setStats({ inscritos: count || 0, cupos: CUPO_LIMITE });
+          setStats({ inscritos: count + 58 || 0, cupos: CUPO_LIMITE });
 
           const [t, e, d, c] = await Promise.all([
             supabase.from('tipos_persona').select('*').eq('evento_id', eventoData.id),
