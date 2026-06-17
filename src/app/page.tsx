@@ -375,7 +375,7 @@ export default function InscripcionPage() {
             Hemos alcanzado el límite de <strong>3,300</strong> inscripciones para este evento.
           </p>
           <p className="text-sm mb-6" style={{ color: colors.azulOscuro, opacity: 0.5 }}>
-            Gracias por tu interés. Para más información, contacta a la organización.
+           En caso de necesitar inscripción favor comunicarse al whatsapp 314 4338049.
           </p>
           <div className="flex items-center justify-center gap-2 text-sm font-medium" style={{ color: colors.rojo }}>
             <Users size={16} />
